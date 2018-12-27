@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block title %}Stock Deliveries{% endblock title %}
+
+{% load static %}
+{% block page_style %}
+        <style>
+            th{background-color: rgb(233, 236, 239);}
+        </style>
+{% endblock page_style %}
+{% block page_js %}
+    <script>
+    $(document).ready(function () {
+
+        $('#date_from').datepicker({
+            changeMonth: true,
+            changeYear: true,
+            dateFormat: 'dd-mm-yy'
+        });
+        $('#date_to' ).datepicker({
+            changeMonth: true,
+            changeYear: true,
+            dateFormat: 'dd-mm-yy'
+        });
+    });
+
+    </script>
+{% endblock page_js %}
+
+{% block page_content %}
+    <nav class="navbar navbar-expand-lg context-bar">
+      <a class="navbar-brand" href="#">
+          <i class="fa fa-users"></i> Stock Deliveries
+      </a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav ml-auto">
+          <a class="nav-item nav-link" href="{% url 'deliveries:create-delivery-note' %}">
+              <i class="fa fa-plus-circle"></i> Add Stock
+          </a>
+        </div>
+      </div>
+    </nav>
+    {% include 'messages.html' %}
+
+    <form class="form-row mb-2" method="post">{% csrf_token %}
+        <div class="col">{{ form.date_from }}</div>
+        <div class="col">{{ form.date_to }}</div>
+        <div class="col">{{ form.branch }}</div>
+        <div class="col">
+            <button class="btn btn-info btn-block" type="submit">Update <i class="fa fa-send"></i></button>
+        </div>
+        <div class="col">
+            <button class="btn btn-info btn-block" type="reset">Reset <i class="fa fa-search-minus"></i></button>
+        </div>
+    </form>
+
+    <div class="card ">
+        <div class="card-body">
+            {% if delivery_list|length > 0 %}
+
+                <table class="table table-striped table-bordered table-hover table-condensed" id="myTable">
+                    <thead>
+                        <th>Date</th><th>Delivery</th><th>Supplier</th><th>Branch</th><th>Value</th>
+                    </thead>
+                    <tbody>
+                        {% for delivery in delivery_list %}
+                            <tr>
+                                <td>{{ delivery.date }}</td>
+                                <td>
+                                    <a href="{% url 'deliveries:list-delivery-items' delivery_id=delivery.pk %}">
+                                        {{ delivery.delivery_number }}
+                                    </a>
+                                </td>
+                                <td>{{ delivery.received_from.name }}</td>
+                                <td>{{ delivery.branch.name }}</td>
+                                <td>{{ delivery.value }}</td>
+
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div class="alert alert-info">No stock deliveries have been made yet</div>
+            {% endif %}
+        </div>
+    </div>
+
+{% endblock page_content %}

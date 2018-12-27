@@ -1,0 +1,237 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% block page_style %}
+		<link href="{% static 'autocomplete/easy-autocomplete.min.css' %}" rel="stylesheet" type="text/css">
+        <style>
+            th{background-color: rgb(233, 236, 239);}
+            .fa-trash-alt, .fa-trash{color: red;}
+        </style>
+{% endblock page_style %}
+{% block page_js %}
+		<script src="{% static 'autocomplete/jquery-1.11.2.min.js' %}"></script>
+		<script src="{% static 'autocomplete/jquery.easy-autocomplete.min.js' %}" type="text/javascript" ></script>
+{% endblock page_js %}
+
+{% block page_content %}
+    {% include 'messages.html' %}
+    <div class="row">
+        <div class="col-4">
+            <div class="card">
+                <div class="card-body">
+                    <input id="product-search" class="form-control" />
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <div class="card-body text-center">
+                    <div id="product-details">
+                        <form style="display: none;" id="sales_form" >{% csrf_token %}
+                            <h4 id="product_name" class="bg-dark text-white pt-2 pb-2 mb-0"></h4>
+                            <table class="table table-bordered">
+                                <thead class="bg-light">
+                                    <th>Price</th><th>Qty</th><th>Total</th>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><input class="form-control" name="unit_price" id="unit_price"></td>
+                                        <td><input type="number" min="1" class="form-control" name="quantity" id="quantity"></td>
+                                        <td><input class="form-control" name="total" id="total"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <input type="hidden" name="product_name" id="product">
+                            <input type="hidden" name="product_id" id="product_pk">
+                            <button class="btn btn-info justify-content-end" type="submit">
+                                Add to Cart <i class="fa fa-cart-plus"></i>
+                            </button>
+                        </form>
+                    </div>
+                    <p class="small" id="search-instructions">Search products to start selling</p>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-8">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-8">
+                            <h4 class="card-title mb-0"><i class="fa fa-shopping-cart"></i> Shopping Cart</h4>
+                        </div>
+                        <div class="col-4" id="cart-total">
+                            <h4 class="card-title mb-0">KES : 0.0</h4>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="card-body" id="product-details">
+                    <div id="cart-contents">
+                        {% if cart_products|length > 0 %}
+                            <table class='table table-bordered' id='cart-table'>
+                                <thead><th></th><th>Item</th><th>Qty</th><th>Price</th><th>Total</th></thead>
+                                <tbody>
+                                    {% for product in cart_products %}
+                                        <tr id='{{ product.product_id }}'>
+                                            <td>
+                                                <a href="{% url 'sales:delete-from-cart' product_id=product.product_id %}">
+                                                    <i class="fa fa-trash-alt"></i>
+                                                </a>
+                                            </td>
+                                            <td>{{ product.product_name }}</td>
+                                            <td>{{ product.quantity }}</td>
+                                            <td>{{ product.unit_price }}</td>
+                                            <td class="product_total">{{ product.total }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+
+                        {% else %}
+                            <div class="alert alert-info" id="cart-alert">No items, shopping cart is empty</div>
+                        {% endif %}
+                    </div>
+                    <div class="row">
+                            <div class="col-6" id="cart-btns">
+                                <a href="{% url 'sales:check-out' %}" class="btn btn-info">
+                                    Check-out <i class="fa fa-flag-checkered"></i>
+                                </a>
+                            </div>
+                            <div class="col-6">
+                                <a href="{% url 'sales:clear-cart' %}" class="btn btn-info">Empty Cart
+                                    <i class="fa fa-flag-checkered"></i>
+                                </a>
+                            </div>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+    $("#sales_form").submit(function () {
+
+       let formData = $("#sales_form").serialize();
+
+       $("input#product-search").val('');
+
+       $.ajax({
+           url: "{% url 'sales:add-to-cart' %}",
+           data: formData,
+           method: 'POST',
+           success: function(reply){
+
+               if(reply.error) {
+                   $('#cart-contents').html(reply.error);
+               }else {
+
+                   $('#cart-contents').html('');
+
+                   $('#cart-contents').append("<table class='table table-bordered' id='cart-table'></table>");
+
+                   $('#cart-table').append("<th></th><th>Item</th><th>Qty</th><th>Price</th><th>Total</th>");
+
+                   let cart_total = 0;
+
+                   reply.forEach(function (item) {
+
+                       cart_total = cart_total + parseInt(item.total);
+
+                       $('#cart-table').append("<tr id='" + item.product_id + "'></tr>");
+                       $("tr#" + item.product_id).append("<td><a href='/sales/delete-from-cart/"+item.product_id+"/'><i class='fa fa-trash'></i></a><td>" + item.product_name + "</td><td>" + item.quantity + "</td><td>" + item.unit_price + "</td><td>" + item.total + "</td>");
+
+                       $('#cart-total').html("<h4 class='card-title mb-0'>KES : " + cart_total + "</h4>");
+                   });
+               }
+           }
+       });
+
+       return false;
+    });
+
+    let options = {
+
+        url: "{% url 'sales:search-products' %}?product=" + $("#product-search").val(),
+
+        getValue: "name",
+
+        template: {
+            type: "description",
+            fields: {
+                description: "name"
+            }
+        },
+
+        list: {
+            match: {
+                enabled: true,
+            },
+            onChooseEvent: function() {
+                $("input#quantity").val(1);
+
+                $("#search-instructions").hide(1000);
+                $("#sales_form").show();
+
+                var name = $("#product-search").getSelectedItemData().name;
+                var quantity = $("#product-search").getSelectedItemData().quantity;
+                var product_id = $("#product-search").getSelectedItemData().id;
+
+                var retail_price = $("#product-search").getSelectedItemData().retail_price;
+                var buying_price = $("#product-search").getSelectedItemData().buying_price;
+
+                $("#product_name").html(name);
+
+                $("input#quantity").attr("value", 1); //default qty is 1
+                $("input#quantity").attr("max", parseInt(quantity)); //limit selling more than what is in store (works client-side only)
+
+                $("input#unit_price").attr("value", retail_price); //default unit retail_price
+                $("input#total").attr("value", retail_price); //default qty x price
+                $("input#product_pk").attr("value", product_id);
+                $("input#product").attr("value", name);
+
+            }
+        },
+
+        theme: "plate-dark"
+    };
+
+    $("#product-search").easyAutocomplete(options);
+
+    $("input#quantity").change(function () { // update total price when qty changes
+
+        let qty = $("input#quantity").val();
+        let price = $("input#unit_price").val();
+
+        let total = qty * price;
+
+        $("input#total").attr("value", total); //default qty x price
+    });
+
+    $("input#unit_price").keyup(function () { // update total price when unit price changes
+
+        let qty = $("input#quantity").val();
+        let price = $("input#unit_price").val();
+
+        let total = qty * price;
+
+        $("input#total").attr("value", total); //default qty x price
+    });
+
+    $(document).ready(function () {
+
+        let cart_total = 0.0;
+        let product_totals = document.getElementsByClassName('product_total');
+
+        let i;
+        for (i = 0; i < product_totals.length; i++) {
+            cart_total += parseFloat(product_totals[i].textContent);
+        }
+
+        $('#cart-total').html("<h4 class='card-title mb-0'>KES : "+cart_total+"</h4>");
+
+    });
+
+
+    </script>
+{% endblock page_content %}

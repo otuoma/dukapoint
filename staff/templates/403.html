@@ -1,0 +1,18 @@
+{% extends 'staff/login.html' %}
+
+{% block form_el %}
+    <div class="alert alert-danger">
+    <i class="fa fa-minus-circle fa-lg"></i> 403: Permission denied
+</div>
+
+    <label class="label">Username</label>
+            <div class="">
+                <input type="text" name="username" autofocus required id="id_username"></div>
+
+            <label class="label">Password</label>
+            <div class=""><input type="password" name="password" required id="id_password"></div>
+            <p class="text-right">
+                <button type="submit" class="btn btn-info">Login</button>
+            {% csrf_token %}
+            </p>
+{% endblock form_el %}

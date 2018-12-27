@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block page_content %}
+    <nav class="navbar navbar-expand-lg context-bar">
+      <a class="navbar-brand" href="#"> <i class="fa fa-briefcase"></i> Staff</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav ml-auto">
+
+          <a class="nav-item nav-link" href="{% url 'staff:create-staff' %}">
+              <i class="fa fa-plus-circle"></i> Add New
+          </a>
+            <a class="nav-item nav-link" href="{% url 'staff:home' %}">
+              <i class="fa fa-list"></i> View
+            </a>
+        </div>
+      </div>
+    </nav>
+
+    {% include 'messages.html' %}
+    <div class="row">
+        <div class="col-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="">Delete Staff {{ staff.get_full_name }}</h5>
+                </div>
+                <div class="card-body">
+                    <h5 class="text-danger">Proceed to delete {{ staff.get_full_name }} ?</h5>
+                    <form action="{% url 'staff:delete-staff' pk=staff.pk %}" method="post">{% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-block">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="">{{ staff.get_full_name }} Details</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-hover table-striped table-responsive">
+                        <tbody>
+                            <tr><td>Name</td><td>{{ staff.get_full_name }}</td></tr>
+                            <tr><td>Phone</td><td>{{ staff.phone_number }}</td></tr>
+                            <tr><td>Email</td><td>{{ staff.email }}</td></tr>
+                            <tr><td>Created</td><td>{{ staff.date_joined|date:'d-m-Y H:i' }}</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+{% endblock page_content %}

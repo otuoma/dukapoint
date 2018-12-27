@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block page_content %}
+    <nav class="navbar navbar-expand-lg context-bar">
+      <a class="navbar-brand" href="#"> <i class="fa fa-briefcase"></i> Suppliers</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav ml-auto">
+
+          <a class="nav-item nav-link" href="{% url 'suppliers:create-supplier' %}">
+              <i class="fa fa-plus-circle"></i> Add New
+          </a>
+            <a class="nav-item nav-link" href="{% url 'suppliers:home' %}">
+              <i class="fa fa-list"></i> View
+            </a>
+          <a class="nav-item nav-link" href="{% url 'suppliers:delete-supplier' pk=supplier.pk %}">
+              <i class="fa fa-trash"></i> Delete</a>
+        </div>
+      </div>
+    </nav>
+
+    {% include 'messages.html' %}
+    <div class="row">
+        <div class="col-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="">Update Supplier {{ supplier.name }}</h5>
+                </div>
+                <div class="card-body">
+                    <form action="{% url 'suppliers:update-supplier' pk=supplier.pk %}" method="post">{% csrf_token %}
+                        {{ form.as_p }}
+                        <button type="submit" class="btn btn-info btn-block">Update</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="">{{ supplier.name }} Details</h5>
+                </div>
+                <div class="card-body">
+                    {% if supplier %}
+                        <table class="table table-hover table-striped table-responsive">
+                            <tbody>
+                                <tr><td>Name</td><td>{{ supplier.name }}</td></tr>
+                                <tr><td>Phone</td><td>{{ supplier.primary_phone }}</td></tr>
+                                <tr><td>Secondary Phone</td><td>{{ supplier.secondary_phone }}</td></tr>
+                                <tr><td>Email</td><td>{{ supplier.email }}</td></tr>
+                                <tr><td>Additional email</td><td>{{ supplier.additional_email }}</td></tr>
+                                <tr><td>Address</td><td>{{ supplier.address }}</td></tr>
+                                <tr><td>Additional Address</td><td>{{ supplier.additional_address }}</td></tr>
+                                <tr><td>Created</td><td>{{ supplier.date_created|date:'d-m-Y H:i' }}</td></tr>
+                            </tbody>
+                        </table>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+{% endblock page_content %}

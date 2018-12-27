@@ -1,0 +1,10 @@
+# sqlite db file
+db.sqlite3
+
+# migration files and pycache dir files
+000*.py*
+*/__pycache__
+
+# git and pycharm .idea dirs
+.idea
+.git

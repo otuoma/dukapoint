@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>BS POS :: {% block title %} {% endblock title %}</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% load static %}
+
+    <link rel="stylesheet" href="{% static 'jquery-ui-1.12/jquery-ui.css' %}">
+    <link rel="stylesheet" href="{% static 'bootstrap-4/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'datatables/datatables.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/media-queries.css' %}">
+
+    <script src="{% static 'jquery-ui-1.12/external/jquery/jquery.js' %}"></script>
+    <script src="{% static 'jquery-ui-1.12/jquery-ui.min.js' %}"></script>
+    <script src="{% static 'jquery-ui-1.12/jquery.datetimepicker.js' %}"></script>
+    <script src="{% static 'bootstrap-4/js/bootstrap.min.js' %}"></script>
+
+    <script src="{% static 'js/script.js' %}"></script>
+
+    <script defer src="{% static 'fontawesome-5/js/fontawesome-all.min.js' %}"></script>
+    <script defer src="{% static 'fontawesome-5/js/fa-v4-shims.min.js' %}"></script>
+    <script defer src="{% static 'datatables/datatables.min.js' %}"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $('#myTable').DataTable(
+                {#{dom: 'Bfrtip', buttons: ['csv', 'excel', 'pdf']}#}
+            );
+
+            $('#sidebarCollapse').on('click', function () {
+                $('#sidebar').toggleClass('active');
+            });
+
+            $('#id_old_password').attr('class', 'form-control');
+            $('#id_new_password1').attr('class', 'form-control');
+            $('#id_new_password2').attr('class', 'form-control');
+
+        });
+    </script>
+{% block page_style %}{% endblock page_style %}
+{% block page_js %}{% endblock page_js %}
+
+</head>
+<body>
+    <div class="wrapper">
+    <!-- Sidebar  -->
+    {% include 'sidebar.html' %}
+    <!-- Page Content  -->
+
+    <div id="content" class="container-fluid">
+        <!-- Load top nav here -->
+        {% include 'top-navigation.html' %}
+        <div class="content p-4">
+            {% block page_content %}{% endblock page_content %}
+        </div>
+
+    </div>
+</div>
+</body>
+</html>

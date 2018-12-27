@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% block title %}Create Customer{% endblock title %}
+{% block page_content %}
+    <nav class="navbar navbar-expand-lg context-bar">
+      <a class="navbar-brand" href="#">
+          <i class="fa fa-handshake"></i> Customers
+      </a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav ml-auto">
+          <a class="nav-item nav-link" href="{% url 'customers:home' %}">
+              <i class="fa fa-list"></i> View</a>
+        </div>
+      </div>
+    </nav>
+
+    {% include 'messages.html' %}
+
+    <div class="row">
+        <div class="col-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="">Add New Customer</h5>
+                </div>
+                <div class="card-body">
+
+                    <form action="{% url 'customers:create-customer' %}" method="post">{% csrf_token %}
+
+                        {{ form.as_p }}
+
+                        <button type="submit" class="btn btn-info btn-block">Save</button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="">10 Most Recent Customers</h5>
+                </div>
+                <div class="card-body">
+
+                    {% if customers|length > 0 %}
+                        <table class="table table-striped table-bordered table-hover table-condensed">
+                            <thead>
+                                <th>#</th><th>Name</th><th>Phone</th><th>Email</th>
+                            </thead>
+                            <tbody>
+                                {% for customer in customers %}
+                                    <tr>
+                                        <td>{{ customer.num }}.</td>
+                                        <td>
+                                            <a href="{% url 'customers:update-customer' pk=customer.pk %}"> {{ customer.name }}</a>
+                                        </td>
+                                        <td>{{ customer.primary_phone }}</td>
+                                        <td>{{ customer.email }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <div class="alert alert-info">No customers have been added yet</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+{% endblock page_content %}

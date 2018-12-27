@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Login{% endblock title %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'bootstrap-4/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'datatables/datatables.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/media-queries.css' %}">
+    <script src="{% static 'jquery-3/jquery-3.3.1.slim.min.js' %}"></script>
+    <script defer src="{% static 'bootstrap-4/js/popper.min.js' %}"></script>
+    <script src="{% static 'bootstrap-4/js/bootstrap.min.js' %}"></script>
+    <script defer src="{% static 'fontawesome-5/js/fontawesome-all.min.js' %}"></script>
+    <script defer src="{% static 'fontawesome-5/js/fa-v4-shims.min.js' %}"></script>
+    <script defer src="{% static 'datatables/datatables.min.js' %}"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#id_username').attr('class', 'form-control');
+            $('#id_password').attr('class', 'form-control');
+        });
+    </script>
+    <style type="text/css">
+        #login-form{
+            max-width: 350px;
+            padding: 12px;
+            box-shadow:  0 2px 2px 0 rgba(0,0,0,0.14),0 1px 5px 0 rgba(0,0,0,0.12),0 3px 1px -2px rgba(0,0,0,0.2);;
+            margin: 30px auto 10px auto;
+            border-radius: 6px;
+            background: #fff;
+        }
+        #login-form label{
+            color: crimson;
+            font-size: 12pt;
+            margin-bottom: 10px;
+            padding-left: 1px;
+        }
+        #login-form div{
+            margin-bottom: 15px;
+        }
+        #login-form form{
+            background: #eee;
+            padding: 12px;
+            border-radius: 5px;
+        }
+        label{padding-left: 0px;}
+    </style>
+</head>
+<body>
+    <div class="container">
+    <div id="login-form">
+        <form method="post" action="{% url 'staff:login' %}?next={{ next }}">{% csrf_token %}
+        <p class="text-center bg-danger text-white p-4">
+            <a href="{% url 'home' %}">BS POS</a>
+        </p>
+            {% include 'messages.html' %}
+            {% block form_el %}
+            <label class="label">Username</label>
+            <div class="">{{ form.username }}</div>
+
+            <label class="label">{{ form.password.label }}</label>
+            <div class="">{{ form.password }}</div>
+            <p class="text-right">
+                <button type="submit" class="btn btn-info">Login</button>
+            </p>
+            {% endblock form_el %}
+
+
+        </form>
+        <p class="text-right mt-3">
+            Forgot password? <a href="#" >Click here</a>
+        </p>
+    </div><!-- .row -->
+</div>
+</body>
+</html>

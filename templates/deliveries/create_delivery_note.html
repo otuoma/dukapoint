@@ -11,8 +11,8 @@
         </style>
 {% endblock page_style %}
 {% block page_js %}
-		<script src="{% static 'autocomplete/jquery-1.11.2.min.js' %}"></script>
-		<script src="{% static 'autocomplete/jquery.easy-autocomplete.min.js' %}" type="text/javascript" ></script>
+    <script src="{% static 'autocomplete/jquery-1.11.2.min.js' %}"></script>
+	<script src="{% static 'autocomplete/jquery.easy-autocomplete.min.js' %}" type="text/javascript" ></script>
 {% endblock page_js %}
 
 {% block page_content %}
@@ -100,32 +100,32 @@
         });
         let options = {
 
-        url: "{% url 'deliveries:search-product' %}?product=" + $("#product_id").val(),
+            url: "{% url 'deliveries:search-product' %}?product=" + $("#product_id").val(),
 
-        getValue: "product_name",
+            getValue: "product_name",
 
-        template: {
-            type: "description",
-            fields: {
-                description: "product_name"
-            }
-        },
+            template: {
+                type: "description",
+                fields: {
+                    description: "product_name"
+                }
+            },
 
-        list: {
-            match: {enabled: true,},
-            onChooseEvent: function() {
-                let product_name = $("#product_id").getSelectedItemData().product_name;
-                let product_id = $("#product_id").getSelectedItemData().product_id;
+            list: {
+                match: {enabled: true,},
+                onChooseEvent: function() {
+                    let product_name = $("#product_id").getSelectedItemData().product_name;
+                    let product_id = $("#product_id").getSelectedItemData().product_id;
 
-                $("input#product_id").val(product_id);
-                $("input#product_id").attr("readonly", true);
+                    $("input#product_id").val(product_id);
+                    $("input#product_id").attr("readonly", true);
 
-                $("label[for='product_id']").html("Product: <strong style='color: black;'>"+product_name+"</strong>");
-            }
-        },
+                    $("label[for='product_id']").html("Product: <strong style='color: black;'>"+product_name+"</strong>");
+                }
+            },
 
-        theme: "plate-dark"
-    };
+            theme: "plate-dark"
+        };
 
     $("#product_id").easyAutocomplete(options);
 

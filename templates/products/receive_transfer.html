@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Receive Transfer {% endblock title %}
+{% block page_style %}
+        <style>
+            th, .bg-light{background-color: rgb(233, 236, 239);}
+            .fa-trash-alt, .fa-trash{color: red;}
+        </style>
+{% endblock page_style %}
+{% block page_js %}{% endblock page_js %}
+
+
+{% block page_content %}
+    {% include 'messages.html' %}
+    <div class="row">
+        <div class="col-4">
+            <div class="card">
+                <div class="card-body m-0 p-0 rounded">
+                    <table class="table table-bordered m-0">
+                        <tr><td class="bg-light text-center" colspan="2"><h5 class="p-0 m-0">Details</h5></td></tr>
+                        <tr><td class="bg-light">Dispatched</td><td>{{ transfer.transfer_date }}</td></tr>
+                        <tr><td class="bg-light">From</td><td>{{ transfer.transfer_from }}</td></tr>
+                        <tr><td class="bg-light">To</td><td>{{ transfer.transfer_to }}</td></tr>
+                        <tr><td class="bg-light">By</td><td>{{ transfer.staff }}</td></tr>
+                        <tr><td class="bg-light">Value</td><td>{{ transfer.value }}</td></tr>
+                    </table>
+                </div>
+            </div>
+            <div class="card mt-2">
+                <div class="card-body">
+                    <p>Confirm list items and receive as is</p>
+                    <a href="?type=as_is" class="btn btn-info btn-block btn-lg">
+                        <i class="fa fa-check-circle"> </i> Receive as is
+                    </a>
+                    <p class="mt-3">OR</p>
+                    <a href="#" class="btn btn-info btn-block btn-lg">
+                        <i class="fa fa-check-circle"> </i> Receive item-wise
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-8">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-8">
+                            <h4 class="card-title mb-0"><i class="fa fa-list"></i> Receive Items</h4>
+                        </div>
+                        <div class="col-4" id="cart-total"></div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div id="">
+                        {% if transfer_products|length > 0 %}
+                            <table class='table table-bordered rounded' id='cart-table'>
+                                <thead><th>#</th><th>Item</th><th>Qty</th><th>Price</th><th>Total</th></thead>
+                                <tbody>
+                                    {% for product in transfer_products %}
+                                        <tr id='{{ product.pk }}'>
+                                            <td>
+                                                <a href="">
+                                                    <i class="fa fa-trash-alt"></i>
+                                                </a>
+                                            </td>
+                                            <td>{{ product.product.name }}</td>
+                                            <td>{{ product.quantity }}</td>
+                                            <td>{{ product.product.buying_price }}</td>
+                                            <td class="product_total">{{ product.total }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        {% else %}
+                            <div class="alert alert-info" id="cart-alert">No items, shopping cart is empty</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function () {});
+    </script>
+
+{% endblock page_content %}

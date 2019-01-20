@@ -3,7 +3,7 @@ from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.views.generic import ListView, FormView, TemplateView
 from deliveries.models import Delivery, Stock
 from deliveries.forms import SetSupplierForm, DeliveryForm, DeliveriesFiltersForm
-from products.models import Product
+from products.models import Product, BranchProduct
 from suppliers.models import Supplier
 import json
 from django.core.exceptions import ObjectDoesNotExist
@@ -48,12 +48,22 @@ class ListDeliveryItems(PermissionRequiredMixin, ListView):
 
 
 class PostStock(PermissionRequiredMixin, TemplateView):
+    """Saves data to the database"""
     permission_required = ["delivery.create_delivery"]
     raise_exception = True
 
     def get(self, request, *args, **kwargs):
 
-        products = request.session['products']
+        try:
+
+            products = request.session['products']
+
+        except KeyError:
+
+            messages.error(request, "No products have been added", extra_tags="alert alert-danger")
+
+            return redirect(to="/deliveries/create-delivery-note/")
+
         supplier = get_object_or_404(Supplier, pk=request.session['supplier']['supplier_id'])
         del_val = delivery_value(products)
 
@@ -89,7 +99,21 @@ class PostStock(PermissionRequiredMixin, TemplateView):
 
             stock.save()
 
-        messages.success(request, "Success, products stock has been update.", extra_tags="alert alert-danger")
+            # Update branch_stock tbl
+
+            branch_stock, created = BranchProduct.objects.get_or_create(
+                product_id=product.pk,
+                branch_id=request.user.branch.pk
+            )
+
+            branch_stock.quantity = branch_stock.quantity + item['quantity']
+
+            branch_stock.save()
+
+        messages.success(request, "Success, products stock has been updated.", extra_tags="alert alert-success")
+
+        del request.session['products']
+        del request.session['supplier']
 
         return redirect(to="/deliveries/")
 

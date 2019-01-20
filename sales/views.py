@@ -3,7 +3,7 @@ from django.contrib.auth.mixins import PermissionRequiredMixin
 import json
 from django.http import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
-from products.models import Product
+from products.models import Product, BranchProduct
 from sales.forms import AddToCartForm, SaleForm, SalesFiltersForm
 from django.shortcuts import redirect, render
 from django.contrib import messages
@@ -80,6 +80,17 @@ class CheckOut(PermissionRequiredMixin, FormView):
             # Update product_stock
             product_obj.quantity = product_obj.quantity - product['quantity']
             product_obj.save()
+
+            # Update branch_stock tbl
+
+            branch_stock, created = BranchProduct.objects.get_or_create(
+                product_id=product_obj.pk,
+                branch_id=request.user.branch.pk
+            )
+
+            branch_stock.quantity = branch_stock.quantity - product['quantity']
+
+            branch_stock.save()
 
         del request.session['cart_products']
         messages.success(request, 'Sale completed successfully', extra_tags='alert alert-success')

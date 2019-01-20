@@ -60,6 +60,17 @@ class CreateBranch(PermissionRequiredMixin, CreateView):
 
         messages.success(self.request, 'Success, branch has been created', extra_tags='alert alert-success')
 
+        # If this is first branch, automatically set current user's branch
+        branches = Branch.objects.all()
+
+        if branches.count() == 1:
+
+            branch = branches.get()
+
+            user = self.request.user
+            user.branch_id = branch.pk
+            user.save()
+
         return reverse_lazy(viewname='branches:create-branch')
 
 

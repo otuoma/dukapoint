@@ -41,7 +41,9 @@
                                 {% for item in stock_list %}
                                     <tr>
                                         <td>{{ item.num }}</td>
-                                        <td>{{ item.product_name }}</td>
+                                        <td>
+                                            <a href="{% url 'products:product-detail' pk=item.product_id %}"> {{ item.product_name }} </a>
+                                        </td>
                                         <td>{{ item.quantity }}</td>
                                         <td class="text-right">{{ item.buying_price }}</td>
                                         <td class="text-right">{{ item.total_cost }}</td>

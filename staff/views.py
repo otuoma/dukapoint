@@ -25,7 +25,7 @@ class ChangeBranch(PermissionRequiredMixin, FormView):
 
             messages.success(request, "Success, branch has been updated", extra_tags="alert alert-success")
 
-        return redirect(to="/staff/change-branch/")
+        return redirect(to='/staff/update-staff/%s' % request.user.pk)
 
 
 class UpdatePassword(PermissionRequiredMixin, FormView):
@@ -202,6 +202,19 @@ class Login(FormView):
     form_class = AuthenticationForm
     template_name = 'staff/login.html'
 
+    def get(self, request, *args, **kwargs):
+
+        if request.GET.get('next'):
+            next_url = request.GET.get('next', '/staff/')
+        else:
+            next_url = '/staff bn/'
+
+        context = {
+            'next': next_url,
+            'form': self.form_class
+        }
+        return render(request, self.template_name, context=context)
+
     def post(self, request, *args, **kwargs):
 
         form = self.form_class(data=request.POST)
@@ -253,9 +266,12 @@ class Home(PermissionRequiredMixin, TemplateView):
                     'name': person.get_full_name(),
                     'phone_number': person.phone_number,
                     'email': person.email,
-                    'branch': person.branch.name,
+                    'branch': person.branch,
                     'pk': person.pk,
                 })
+        else:
+
+            staff = None
 
         context = {
             'staff': staff

@@ -10,10 +10,8 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav ml-auto">
-            <a class="nav-item nav-link" href="">
-                <i class="fa fa-money-bill-alt"></i> Post Sales
-            </a>
-            <a class="nav-item nav-link" href="{% url 'deliveries:post-stock' %}">
+
+            <a class="nav-item nav-link" href="{% url 'deliveries:create-delivery-note' %}">
                 <i class="fa fa-plus-circle"></i> Post Stock
             </a>
             <a class="nav-item nav-link" href="{% url 'products:update-product' pk=product.pk %}">
@@ -62,14 +60,14 @@
                 <div class="card-header">
                     <h4 class="card-title">{{ product.name }} details</h4>
                 </div>
-                <div class="card-body">{{ stock_list }}
-                    <table class="table table-bordered table-striped">
+                <div class="card-body">
+                    <table class="table table-bordered table-striped table-sm">
                         <tbody class="">
-                        <tr><td>Qty in stock</td><td>{{ product.quantity }}</td></tr>
-                        <tr><td>Buying price</td><td>{{ product.buying_price }}</td></tr>
-                        <tr><td>Retail price</td><td>{{ product.retail_price }}</td></tr>
-                        <tr><td>Wholesale price</td><td>{{ product.wholesale_price }}</td></tr>
-                        <tr><td>Supplier</td><td>{{ product.supplier }}</td></tr>
+                        <tr><td>Qty in stock</td><td>{{ stock_vals.quantity }} @{{ request.user.branch.name }} </td></tr>
+                        <tr><td>Buying price</td><td>{{ stock_vals.buying_price }}</td></tr>
+                        <tr><td>Retail price</td><td>{{ stock_vals.retail_price }}</td></tr>
+                        <tr><td>Wholesale price</td><td>{{ stock_vals.wholesale_price }}</td></tr>
+                        <tr><td>Supplier</td><td>{{ stock_vals.supplier }}</td></tr>
                         <tr><td>Manufacturer</td><td>{{ product.manufacturer }}</td></tr>
                         <tr><td>Sku Code</td><td>{{ product.sku_code }}</td></tr>
                         <tr><td>Created</td><td>{{ product.created|date:'d-m-Y H:i:s' }}</td></tr>

@@ -41,6 +41,10 @@
                          <a href="{% url 'deliveries:home' %}">
                              <i class="fa fa-shopping-basket"></i> Deliveries</a>
                     </li>
+                    <li>
+                         <a href="{% url 'products:view-transfers' %}">
+                             <i class="fa fa-shopping-basket"></i> Transfers</a>
+                    </li>
                 </ul>
             </li>
             <li class="sidebar-li">
@@ -85,7 +89,7 @@
                             <i class="fa fa-list"></i> View</a>
                     </li>
                     <li>
-                        <a href="#">
+                        <a href="{% url 'staff:create-staff' %}">
                             <i class="fa fa-user-plus"></i> Add New</a>
                     </li>
                 </ul>
@@ -102,7 +106,7 @@
                     </li>
                     <li>
                         <a href="#">
-                            <i class="fa fa-user-plus"></i> Add New</a>
+                            <i class="fa fa-cog"></i> Administration </a>
                     </li>
                 </ul>
             </li>

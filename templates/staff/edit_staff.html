@@ -26,7 +26,7 @@
         <div class="col-4">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="">Update Staff {{ person.get_full_name }}</h5>
+                    <h5 class="">Edit {{ person.get_full_name }}</h5>
                 </div>
                 <div class="card-body">
                     <form action="{% url 'staff:update-staff' pk=person.pk %}" method="post">{% csrf_token %}

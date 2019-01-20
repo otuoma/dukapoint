@@ -8,3 +8,4 @@ db.sqlite3
 # git and pycharm .idea dirs
 .idea
 .git
+#dukapoint/settings.py

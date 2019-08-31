@@ -13,6 +13,7 @@ class Delivery(models.Model):
     processed_by = models.ForeignKey(Staff, on_delete=models.PROTECT)
     value = models.FloatField(default=0.0)
     delivery_number = models.CharField(blank=True, null=True, max_length=50)
+    is_transfer = models.BooleanField(default=False)
 
     def __str__(self):
 

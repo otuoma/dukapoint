@@ -4,6 +4,7 @@ from django.db import models
 class Supplier(models.Model):
 
     name = models.CharField(max_length=250)
+    supplier_code = models.CharField(max_length=250,)
     description = models.CharField(max_length=500, blank=True)
     primary_phone = models.CharField(max_length=15)
     secondary_phone = models.CharField(max_length=15, blank=True)

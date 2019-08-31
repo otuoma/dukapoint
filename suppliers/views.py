@@ -83,6 +83,7 @@ class CreateSupplier(PermissionRequiredMixin, CreateView):
                 suppliers.append({
                     'num': num,
                     'name': supplier.name,
+                    'supplier_code': supplier.supplier_code,
                     'primary_phone': supplier.primary_phone,
                     'email': supplier.email,
                     'pk': supplier.pk,
@@ -101,7 +102,9 @@ class CreateSupplier(PermissionRequiredMixin, CreateView):
 
         if form.is_valid():
 
-            form.save()
+            supplier = form.save(commit=False)
+            supplier.supplier_code = supplier.name.replace(" ", "_").lower()
+            supplier.save()
 
             messages.success(request, 'Success, supplier created', extra_tags='alert alert-success')
 

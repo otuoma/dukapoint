@@ -8,4 +8,7 @@ db.sqlite3
 # git and pycharm .idea dirs
 .idea
 .git
-#dukapoint/settings.py
+dukapoint/settings.py
+
+#The virtual env
+venv

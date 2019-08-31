@@ -69,6 +69,9 @@
                         {% for transfer in transfers_list %}
                             <tr>
                                 <td>
+                                    [<a href="{% url 'products:view-transfer-products' transfer_id=transfer.pk %}" class="text-info">
+                                        Items
+                                    </a>]
                                     <a href="{% url 'products:receive-transfer' transfer_id=transfer.pk %}">
                                         {{ transfer.transfer_date }}
                                     </a>

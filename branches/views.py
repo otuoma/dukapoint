@@ -1,10 +1,11 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView
 from branches.models import Branch
 from branches.forms import CreateBranchForm, UpdateBranchForm
 from django.contrib import messages
+from suppliers.models import Supplier
 
 
 class DeleteBranch(PermissionRequiredMixin, DeleteView):
@@ -26,19 +27,28 @@ class UpdateBranch(PermissionRequiredMixin, UpdateView):
     template_name = 'branches/edit_branch.html'
     model = Branch
 
-    def get_context_data(self, **kwargs):
+    def post(self, request, *args, **kwargs):
 
-        context = super().get_context_data(**kwargs)
+        branch = self.get_object()
+        form = self.form_class(data=request.POST, instance=branch)
 
-        context['branches'] = Branch.objects.all().order_by('-pk')
+        if form.is_valid():
 
-        return context
+            # update supplier tbl
+            supplier, created = Supplier.objects.update_or_create(name=branch.name)
 
-    def get_success_url(self):
+            if not created:  # update supplier name
 
-        messages.success(self.request, 'Success, branch updated.', extra_tags='alert alert-success')
+                supplier.name = form.cleaned_data['name']
+                supplier.save()
 
-        return reverse_lazy(viewname='branches:update-branch', kwargs={'pk': self.kwargs['pk']})
+            form.save()
+
+            messages.success(self.request, 'Success, branch updated.', extra_tags='alert alert-success')
+
+            return redirect(to=f"/branches/update-branch/{branch.pk}/")
+        else:
+            return render(request, self.template_name, context={'form': form, 'branch': branch})
 
 
 class CreateBranch(PermissionRequiredMixin, CreateView):
@@ -56,22 +66,44 @@ class CreateBranch(PermissionRequiredMixin, CreateView):
 
         return context
 
-    def get_success_url(self):
+    def post(self, request, *args, **kwargs):
 
-        messages.success(self.request, 'Success, branch has been created', extra_tags='alert alert-success')
+        form = self.form_class(data=request.POST)
 
-        # If this is first branch, automatically set current user's branch
-        branches = Branch.objects.all()
+        branches = Branch.objects.all().order_by('-pk')[:25]
 
-        if branches.count() == 1:
+        if form.is_valid():
 
-            branch = branches.get()
+            branch = form.save(commit=False)
+            branch.branch_code = branch.name.replace(" ", "_").lower()
+            branch.save()
 
-            user = self.request.user
-            user.branch_id = branch.pk
-            user.save()
+            # If this is first branch, automatically set current user's branch
+            if branches.count() == 1:
+                branch = branches.get()
 
-        return reverse_lazy(viewname='branches:create-branch')
+                user = self.request.user
+                user.branch_id = branch.pk
+                user.save()
+
+            # Auto-create branch as a supplier
+            supplier = Supplier(
+                name=form.cleaned_data['name'],
+                supplier_code=form.cleaned_data['name'].replace(" ", "_"),
+                primary_phone=form.cleaned_data['phone_contact'],
+                address=form.cleaned_data['location']
+            )
+            supplier.save()
+
+            messages.success(self.request, 'Success, branch has been created', extra_tags='alert alert-success')
+
+            return redirect(to="/branches/create-branch/")
+
+        else:
+
+            messages.error(self.request, 'Failed, form validation failed', extra_tags='alert alert-danger')
+
+        return render(request, self.template_name, context={'form': form})
 
 
 class Home(PermissionRequiredMixin, TemplateView):

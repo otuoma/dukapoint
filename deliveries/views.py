@@ -271,6 +271,7 @@ class ClearDeliveryNote(TemplateView):
 
 
 class Home(PermissionRequiredMixin, FormView):
+    """Displays deliveries and filters deliveries based on submitted form"""
 
     permission_required = ['delivery.add_delivery']
     raise_exception = True
@@ -280,7 +281,7 @@ class Home(PermissionRequiredMixin, FormView):
 
         context = self.get_context_data(**kwargs)
 
-        context['delivery_list'] = Delivery.objects.all().order_by("-date")
+        context['delivery_list'] = Delivery.objects.all().order_by("-date")[:500]
 
         return render(request, "deliveries/home.html", context)
 

@@ -173,12 +173,12 @@
                 $("#search-instructions").hide(1000);
                 $("#sales_form").show();
 
-                var name = $("#product-search").getSelectedItemData().name;
-                var quantity = $("#product-search").getSelectedItemData().quantity;
-                var product_id = $("#product-search").getSelectedItemData().id;
+                let name = $("#product-search").getSelectedItemData().name;
+                let quantity = $("#product-search").getSelectedItemData().quantity;
+                let product_id = $("#product-search").getSelectedItemData().id;
 
-                var retail_price = $("#product-search").getSelectedItemData().retail_price;
-                var buying_price = $("#product-search").getSelectedItemData().buying_price;
+                let retail_price = $("#product-search").getSelectedItemData().retail_price;
+                let buying_price = $("#product-search").getSelectedItemData().buying_price;
 
                 $("#product_name").html(name);
 
@@ -186,6 +186,7 @@
                 $("input#quantity").attr("max", parseInt(quantity)); //limit selling more than what is in store (works client-side only)
 
                 $("input#unit_price").attr("value", retail_price); //default unit retail_price
+                $("input#unit_price").attr("min", buying_price); //prevent selling item below buying price
                 $("input#total").attr("value", retail_price); //default qty x price
                 $("input#product_pk").attr("value", product_id);
                 $("input#product").attr("value", name);

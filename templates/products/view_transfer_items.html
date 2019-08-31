@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+
+{% block title %}Items in Transfer{% endblock title %}
+
+{% load static %}
+{% block page_style %} {% endblock page_style %}
+{% block page_js %} {% endblock page_js %}
+
+{% block page_content %}
+    <nav class="navbar navbar-expand-lg context-bar">
+      <a class="navbar-brand" href="#">
+          <i class="fa fa-truck"></i> {{ transfer_products|length }} Items in Transfer to <span class="text-info">{{ transfer.transfer_to }}</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav ml-auto">
+          <a class="nav-item nav-link" href="{% url 'products:view-transfers' %}">
+              <i class="fa fa-list"></i> View Transfers
+          </a>
+          <a class="nav-item nav-link" href="{% url 'products:transfer-products' %}">
+              <i class="fa fa-plus-circle"></i> Make Transfer
+          </a>
+        </div>
+      </div>
+    </nav>
+    {% include 'messages.html' %}
+    <div class="row">
+        <div class="col-8 col-md-8">
+            <div class="card ">
+                <div class="card-body">
+                    {% if transfer_products|length > 0 %}
+
+                        <table class="table table-striped table-bordered table-hover table-sm" id="myTable">
+                            <thead class="bg-light">
+                                <th>Product</th><th>Qty</th>
+                            </thead>
+                            <tbody>
+                                {% for product in transfer_products %}
+                                    <tr>
+                                        <td>
+                                            <a href="{% url 'products:product-detail' pk=product.product.pk %}">
+                                                {{ product.product.name }}
+                                            </a>
+                                        </td>
+                                        <td>{{ product.quantity }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <div class="alert alert-info">No stock transfers have been made yet</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body m-0 p-0 rounded">
+                    <table class="table table-bordered m-0">
+                        <tr><td class="bg-light text-center" colspan="2"><h5 class="p-0 m-0">Details</h5></td></tr>
+                        <tr><td class="bg-light">Dispatched</td><td>{{ transfer.transfer_date }}</td></tr>
+                        <tr><td class="bg-light">From</td><td>{{ transfer.transfer_from }}</td></tr>
+                        <tr><td class="bg-light">To</td><td>{{ transfer.transfer_to }}</td></tr>
+                        <tr><td class="bg-light">By</td><td>{{ transfer.staff }}</td></tr>
+                        <tr><td class="bg-light">Value</td><td>{{ transfer.value }}</td></tr>
+                        <tr>
+                            <td class="bg-light">Status</td><td>
+                                {% if transfer.received %}
+                                    <span class="text-success">Received <i class="fa fa-check-circle"></i></span>
+                                {% else %}
+                                    <span class="text-info">Pending</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% if transfer.transfer_to.name == user.branch.name %}
+                            <tr>
+                                <td class="bg-light" colspan="2">
+                                    <a href="{% url 'products:receive-transfer' transfer_id=transfer.pk %}" class="btn btn-info btn-block">
+                                        Receive Items
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endif %}
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock page_content %}

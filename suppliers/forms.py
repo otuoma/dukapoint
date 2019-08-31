@@ -20,7 +20,7 @@ class UpdateSupplierForm(forms.ModelForm):
 
     class Meta:
         model = Supplier
-        exclude = ['date_created']
+        exclude = ['date_created', 'supplier_code']
 
 
 class CreateSupplierForm(forms.ModelForm):
@@ -41,5 +41,5 @@ class CreateSupplierForm(forms.ModelForm):
 
     class Meta:
         model = Supplier
-        exclude = ['date_created']
+        exclude = ['date_created', 'supplier_code']
 

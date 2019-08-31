@@ -8,6 +8,7 @@ from sales.forms import AddToCartForm, SaleForm, SalesFiltersForm
 from django.shortcuts import redirect, render
 from django.contrib import messages
 from sales.models import Sale
+from deliveries.models import Stock
 from django.db.models import Sum
 
 
@@ -107,7 +108,7 @@ class CheckOut(PermissionRequiredMixin, FormView):
         return render(request, self.template_name, {'cart_products': data})
 
 
-class DeleterCartProduct(PermissionRequiredMixin, TemplateView):
+class DeleteCartProduct(PermissionRequiredMixin, TemplateView):
     permission_required = ["products.view_products"]
     raise_exception = True
 
@@ -139,6 +140,7 @@ class DeleterCartProduct(PermissionRequiredMixin, TemplateView):
 
 
 class AddToCart(PermissionRequiredMixin, FormView):
+    """Adds items to session"""
     permission_required = ["products.view_products"]
     raise_exception = True
     form_class = AddToCartForm
@@ -245,14 +247,19 @@ class SearchProducts(PermissionRequiredMixin, FormView):
 
         try:
 
-            products = Product.objects.filter(name__contains=request.GET.get('product'))
+            products = Stock.objects.filter(
+                product__name__contains=request.GET.get('product'),
+                current_branch_id=request.user.branch_id
+            )
+
+            print(products)
 
             product_list = []
 
             for item in products:
                 product_list.append({
-                    'name': item.name,
-                    'id': item.pk,
+                    'name': item.product.name,
+                    'id': item.product.pk,
                     'quantity': item.quantity,
                     'retail_price': item.retail_price,
                     'wholesale_price': item.wholesale_price,

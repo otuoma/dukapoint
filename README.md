@@ -294,8 +294,7 @@ Perform the following tasks preferably in the sequence listed below:
 
 1. Create branches `System->branches->add new`
 
-2. Set superuser branch - on the top-right of the page, click on the user name and select 
-   `Change branch` to set the logged-in user's branch.
+2. Superuser branch - is now set automatically when the first branch is created.
 
 3. Add suppliers `Suppliers->Add new`
 
@@ -308,6 +307,10 @@ the name of a product to start selling.
 
 7. View sales reports `Sales->reports`
 
-
+##TO DO
+1. Finish transfers module
+2. Write tests
+3. Remove current branch in products.forms.SetTransferToForm
+4. Use transactions for multiple tbl updates
 
 

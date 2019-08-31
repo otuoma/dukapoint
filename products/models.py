@@ -1,6 +1,7 @@
 from django.db import models
 from suppliers.models import Supplier
 from branches.models import Branch
+# from deliveries.models import Delivery
 from staff.models import Staff
 
 
@@ -27,7 +28,8 @@ class Product(models.Model):
 class BranchProduct(models.Model):
     """Purposely for keeping track of product quantity at a branch"""
 
-    product = models.OneToOneField(Product, on_delete=models.PROTECT, unique=False,)
+    # product = models.OneToOneField(Product, on_delete=models.PROTECT, unique=False,)
+    product = models.ForeignKey(Product, on_delete=models.PROTECT, unique=False,)
     branch = models.ForeignKey(Branch, on_delete=models.PROTECT, unique=False)
     quantity = models.IntegerField(default=0.0)
 
@@ -48,7 +50,13 @@ class Transfer(models.Model):
 
     def __str__(self):
 
-        return self.transfer_date
+        return str(self.transfer_date)
+
+    def get_products(self):
+
+        """return queryset of products belonging to this transfer"""
+
+        return TransferProduct.objects.filter(transfer=self.pk)
 
 
 class TransferProduct(models.Model):
@@ -56,6 +64,7 @@ class TransferProduct(models.Model):
     product = models.ForeignKey(Product, on_delete=models.PROTECT)
     quantity = models.IntegerField(default=0)
     transfer = models.ForeignKey(Transfer, on_delete=models.PROTECT)
+    unit_cost = models.FloatField(default=0.0)
 
     def __str__(self):
 

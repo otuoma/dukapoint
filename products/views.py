@@ -1,16 +1,18 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
+from datetime import datetime
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.views.generic import TemplateView, FormView, UpdateView, DeleteView, DetailView, ListView
 from products.models import Product, Transfer, TransferProduct, BranchProduct
-from deliveries.models import Stock
+from deliveries.models import Stock, Delivery
+from suppliers.models import Supplier
 from products.forms import CreateProductForm, UpdateProductForm, TransferFiltersForm, ProductTransferForm, SetTransferToForm
 from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
 
 
 class ReceiveTransfer(PermissionRequiredMixin, TemplateView):
-    permission_required = ['products_transfer.change_transfer']
+    permission_required = ['products_transfer.add_transfer']
     raise_exception = True
     template_name = 'products/receive_transfer.html'
 
@@ -23,6 +25,74 @@ class ReceiveTransfer(PermissionRequiredMixin, TemplateView):
 
         context['transfer_products'] = transfer_products
         context['transfer'] = transfer
+
+        if request.GET.get("type") == "as_is":
+
+            if transfer.received:  # Prevent repeat if page is reloaded
+                return redirect(to=f"/products/receive_transfer/{transfer.pk}/")
+
+            # Add entry in deliveries
+            received_from = get_object_or_404(Supplier, name=transfer.transfer_from.name)
+            delivery = Delivery(
+                received_from_id=received_from.pk,
+                value=transfer.value,
+                processed_by_id=request.user.pk,
+                delivery_number="TRANSFER",
+                is_transfer=True,
+                branch_id=request.user.branch_id
+            )
+            delivery.save()
+
+            for product in transfer_products:
+
+                branch_product, created = BranchProduct.objects.get_or_create(
+                    product_id=product.pk,
+                    branch_id=transfer.transfer_to.pk
+                )
+
+                branch_product.quantity = branch_product.quantity + product.quantity
+
+                branch_product.save()
+
+                # create stock instance
+                product_details = get_object_or_404(Stock, product_id=product.product_id, current_branch_id=transfer.transfer_from_id)
+                stock = Stock(
+                    quantity=product.quantity,
+                    buying_price=product_details.buying_price,
+                    retail_price=product_details.retail_price,
+                    wholesale_price=product_details.wholesale_price,
+                    current_branch_id=request.user.branch_id,
+                    delivery_id=delivery.pk,
+                    home_branch_id=request.user.branch_id,
+                    product_id=product.product_id,
+                    staff_id=request.user.pk
+                )
+                stock.save()
+
+            transfer.received = True
+            transfer.date_received = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            transfer.save()
+
+            messages.success(request, "Success, items have been received", extra_tags="alert alert-success")
+
+        return render(request, self.template_name, context=context)
+
+
+class ViewTransferProducts(PermissionRequiredMixin, TemplateView):
+    permission_required = ['products_transfer.add_transfer']
+    raise_exception = True
+    template_name = "products/view_transfer_items.html"
+    context_object_name = "transfer_products"
+
+    def get(self, request, *args, **kwargs):
+
+        context = dict()
+
+        transfer = get_object_or_404(Transfer, pk=self.kwargs['transfer_id'])
+
+        context['transfer'] = transfer
+
+        context['transfer_products'] = transfer.get_products()
 
         return render(request, self.template_name, context=context)
 
@@ -66,6 +136,7 @@ class ProcessTransfer(PermissionRequiredMixin, FormView):
             transfer_product = TransferProduct(
                 transfer_id=transfer.pk,
                 product_id=product['product_id'],
+                unit_cost=item.buying_price,
                 quantity=product['quantity']
             )
 
@@ -114,6 +185,7 @@ class ViewTransfers(PermissionRequiredMixin, ListView):
 
 
 class AddProduct(PermissionRequiredMixin, FormView):
+    """Add product item to session cart"""
     permission_required = ['transfer.add_transfer']
     raise_exception = True
     template_name = 'products/transfer_products.html'
@@ -140,23 +212,31 @@ class AddProduct(PermissionRequiredMixin, FormView):
 
                 return redirect(to='/products/transfer-products/')
 
-            if stock.quantity < 1:
+            if stock.quantity < form.cleaned_data['quantity']:
 
-                messages.error(request, "Item out of stock", extra_tags="alert alert-danger")
+                messages.error(
+                    request,
+                    f"Out of range, only {stock.quantity} available.",
+                    extra_tags="alert alert-danger"
+                )
 
                 return redirect(to='/products/transfer-products/')
 
             new_product = {
                 'product_name': product.name,
                 'product_id': product.pk,
+                'unit_cost': stock.buying_price,
                 'quantity': form.cleaned_data['quantity'],
+                'total': form.cleaned_data['quantity'] * stock.buying_price,
             }
 
-            if "products" not in request.session:
+            if "products" not in request.session:  # first product
 
                 request.session['products'] = list()
 
                 request.session['products'].append(new_product)
+
+                request.session['products_total'] = new_product['total']
 
             else:
 
@@ -166,6 +246,7 @@ class AddProduct(PermissionRequiredMixin, FormView):
                 if new_product['product_id'] not in product_ids:
 
                     cart_products.append(new_product)
+
                 else:
 
                     for item in cart_products:
@@ -173,10 +254,13 @@ class AddProduct(PermissionRequiredMixin, FormView):
                         if item['product_id'] == new_product['product_id']:
 
                             item['quantity'] = item['quantity'] + new_product['quantity']
+                            item['total'] = item['quantity'] * item['unit_cost']
+
                         else:
                             pass
 
                 request.session['products'] = cart_products
+                request.session['products_total'] = sum([item['total'] for item in cart_products])
 
         return redirect(to='/products/transfer-products/')
 
@@ -413,6 +497,7 @@ class DeleterCartProduct(PermissionRequiredMixin, TemplateView):
                         cart_products.remove(product)
 
                         request.session['products'] = cart_products
+                        request.session['products_total'] = sum([item['total'] for item in cart_products])
 
                         messages.success(request, 'Success, product has been removed', extra_tags='alert alert-info')
 
@@ -456,6 +541,7 @@ class SetTransferTo(PermissionRequiredMixin, FormView):
 
                 return redirect(to="/products/set-transfer-to/")
 
+            request.session['transfer_to'] = form.cleaned_data['transfer_to'].name
             request.session['transfer_to_id'] = form.cleaned_data['transfer_to'].pk
 
             return redirect(to="/products/add-product/")

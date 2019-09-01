@@ -28,7 +28,6 @@ class Product(models.Model):
 class BranchProduct(models.Model):
     """Purposely for keeping track of product quantity at a branch"""
 
-    # product = models.OneToOneField(Product, on_delete=models.PROTECT, unique=False,)
     product = models.ForeignKey(Product, on_delete=models.PROTECT, unique=False,)
     branch = models.ForeignKey(Branch, on_delete=models.PROTECT, unique=False)
     quantity = models.IntegerField(default=0.0)
@@ -57,6 +56,9 @@ class Transfer(models.Model):
         """return queryset of products belonging to this transfer"""
 
         return TransferProduct.objects.filter(transfer=self.pk)
+
+    class Meta:
+        permissions = [('receive_transfer', 'Can receive transfer')]
 
 
 class TransferProduct(models.Model):

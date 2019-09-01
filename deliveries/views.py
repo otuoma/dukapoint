@@ -13,8 +13,9 @@ from deliveries.utils import delivery_value
 
 
 class ListDeliveryItems(PermissionRequiredMixin, ListView):
-    permission_required = ["stock.view_stock"]
+    permission_required = ["delivery.view_delivery"]
     raise_exception = True
+    permission_denied_message = "You dont have permission to view deliveries"
     template_name = "deliveries/delivery_items.html"
     model = Stock
     context_object_name = "stock_list"
@@ -49,15 +50,14 @@ class ListDeliveryItems(PermissionRequiredMixin, ListView):
 
 class PostStock(PermissionRequiredMixin, TemplateView):
     """Saves data to the database"""
-    permission_required = ["delivery.create_delivery"]
+    permission_required = ['delivery.add_delivery']
     raise_exception = True
+    permission_denied_message = "You dont have permission to add delivery"
 
     def get(self, request, *args, **kwargs):
 
         try:
-
             products = request.session['products']
-
         except KeyError:
 
             messages.error(request, "No products have been added", extra_tags="alert alert-danger")
@@ -119,8 +119,9 @@ class PostStock(PermissionRequiredMixin, TemplateView):
 
 
 class CreateDeliveryNote(PermissionRequiredMixin, FormView):
-    permission_required = ['delivery.create_deliveries']
+    permission_required = ['delivery.add_delivery']
     raise_exception = True
+    permission_denied_message = "You dont have permission to add delivery"
     template_name = "deliveries/create_delivery_note.html"
     form_class = DeliveryForm
 
@@ -207,8 +208,9 @@ class CreateDeliveryNote(PermissionRequiredMixin, FormView):
 
 
 class SetSupplier(PermissionRequiredMixin, FormView):
-    permission_required = ["delivery.create_delivery"]
+    permission_required = ["delivery.add_delivery"]
     raise_exception = True
+    permission_denied_message = "You dont have permission to add deliveries"
     template_name = "deliveries/set_supplier.html"
     form_class = SetSupplierForm
 
@@ -233,6 +235,7 @@ class SetSupplier(PermissionRequiredMixin, FormView):
 class SearchProduct(PermissionRequiredMixin, FormView):
     permission_required = ["deliveries.create_delivery"]
     raise_exception = True
+    permission_denied_message = "You dont have permission to add deliveries"
 
     def get(self, request, *args, **kwargs):
 
@@ -257,7 +260,10 @@ class SearchProduct(PermissionRequiredMixin, FormView):
         return HttpResponse(response, content_type="text/json")
 
 
-class ClearDeliveryNote(TemplateView):
+class ClearDeliveryNote(PermissionRequiredMixin, TemplateView):
+    permission_required = ['delivery.add_delivery']
+    raise_exception = True
+    permission_denied_message = "You dont have permission to add deliveries"
 
     def get(self, request, *args, **kwargs):
 
@@ -273,8 +279,9 @@ class ClearDeliveryNote(TemplateView):
 class Home(PermissionRequiredMixin, FormView):
     """Displays deliveries and filters deliveries based on submitted form"""
 
-    permission_required = ['delivery.add_delivery']
+    permission_required = ['delivery.view_delivery']
     raise_exception = True
+    permission_denied_message = "You dont have permission to view deliveries"
     form_class = DeliveriesFiltersForm
 
     def get(self, request, *args, **kwargs):

@@ -12,8 +12,9 @@ from django.core.exceptions import ObjectDoesNotExist
 
 
 class ReceiveTransfer(PermissionRequiredMixin, TemplateView):
-    permission_required = ['products_transfer.add_transfer']
+    permission_required = ['transfer.receive_transfer']
     raise_exception = True
+    permission_denied_message = "You dont have permission to receive transfer"
     template_name = 'products/receive_transfer.html'
 
     def get(self, request, *args, **kwargs):
@@ -79,7 +80,8 @@ class ReceiveTransfer(PermissionRequiredMixin, TemplateView):
 
 
 class ViewTransferProducts(PermissionRequiredMixin, TemplateView):
-    permission_required = ['products_transfer.add_transfer']
+    permission_required = ['transfer.view_transfer']
+    permission_denied_message = "You dont have permission to view transfers"
     raise_exception = True
     template_name = "products/view_transfer_items.html"
     context_object_name = "transfer_products"
@@ -98,7 +100,8 @@ class ViewTransferProducts(PermissionRequiredMixin, TemplateView):
 
 
 class ProcessTransfer(PermissionRequiredMixin, FormView):
-    permission_required = ['products_transfer.add_transfer']
+    permission_required = ['transfer.add_transfer']
+    permission_denied_message = "You dont have permission to add transfers"
     raise_exception = True
     template_name = 'products/transfer_products.html'
     form_class = ProductTransferForm
@@ -163,6 +166,7 @@ class ProcessTransfer(PermissionRequiredMixin, FormView):
 
 class ViewTransfers(PermissionRequiredMixin, ListView):
     permission_required = ['transfer.view_transfer']
+    permission_denied_message = "You dont have permission to view transfers"
     raise_exception = True
     template_name = 'products/view_transfers.html'
     form_class = TransferFiltersForm
@@ -187,6 +191,7 @@ class ViewTransfers(PermissionRequiredMixin, ListView):
 class AddProduct(PermissionRequiredMixin, FormView):
     """Add product item to session cart"""
     permission_required = ['transfer.add_transfer']
+    permission_denied_message = "You dont have permission to add transfers"
     raise_exception = True
     template_name = 'products/transfer_products.html'
     form_class = ProductTransferForm
@@ -271,6 +276,7 @@ class TransferProducts(PermissionRequiredMixin, FormView):
 
     permission_required = ['transfer.add_transfer']
     raise_exception = True
+    permission_denied_message = "You dont have permission to add transfers"
     template_name = 'products/transfer_products.html'
     form_class = ProductTransferForm
 
@@ -286,6 +292,7 @@ class TransferProducts(PermissionRequiredMixin, FormView):
 
 class ProductDetail(PermissionRequiredMixin, DetailView):
     permission_required = ['products.view_product']
+    permission_denied_message = "You dont have permission to view products"
     raise_exception = True
     model = Product
     template_name = 'products/product_detail.html'
@@ -337,6 +344,7 @@ class ProductDetail(PermissionRequiredMixin, DetailView):
 
 class DeleteProduct(PermissionRequiredMixin, DeleteView):
     permission_required = ['products.delete_product']
+    permission_denied_message = "You dont have permission to delete product"
     raise_exception = True
     model = Product
 
@@ -349,6 +357,7 @@ class DeleteProduct(PermissionRequiredMixin, DeleteView):
 
 class UpdateProduct(PermissionRequiredMixin, UpdateView):
     permission_required = ['products.change_product']
+    permission_denied_message = "You dont have permission to change product"
     raise_exception = True
     form_class = UpdateProductForm
     template_name = 'products/edit_product.html'
@@ -364,6 +373,7 @@ class UpdateProduct(PermissionRequiredMixin, UpdateView):
 class CreateProduct(PermissionRequiredMixin, FormView):
     permission_required = 'products.add_product'
     raise_exception = True
+    permission_denied_message = "You dont have permission to add products"
     template_name = 'products/create_product.html'
     form_class = CreateProductForm
 
@@ -441,6 +451,7 @@ class CreateProduct(PermissionRequiredMixin, FormView):
 class Home(PermissionRequiredMixin, TemplateView):
     template_name = 'products/home.html'
     permission_required = ['products.add_product']
+    permission_denied_message = "You dont have permission to view products"
     raise_exception = True
 
     def get(self, request, *args, **kwargs):
@@ -475,7 +486,8 @@ class Home(PermissionRequiredMixin, TemplateView):
 
 
 class DeleterCartProduct(PermissionRequiredMixin, TemplateView):
-    permission_required = ["products.change_transfer"]
+    permission_required = ["transfer.add_transfer"]
+    permission_denied_message = "You dont have permission to add transfers"
     raise_exception = True
 
     def get(self, request, *args, **kwargs):
@@ -510,7 +522,10 @@ class DeleterCartProduct(PermissionRequiredMixin, TemplateView):
         return redirect(to='/products/transfer-products/')
 
 
-class ClearList(TemplateView):
+class ClearList(PermissionRequiredMixin, TemplateView):
+    permission_required = ["transfer.add_transfer"]
+    permission_denied_message = "You dont have permission to add transfers"
+    raise_exception = True
 
     def get(self, request, *args, **kwargs):
 
@@ -524,10 +539,11 @@ class ClearList(TemplateView):
 
 
 class SetTransferTo(PermissionRequiredMixin, FormView):
+    permission_required = ["transfer.add_transfer"]
+    permission_denied_message = "You dont have permission to add transfers"
+    raise_exception = True
     template_name = 'products/set_transfer_to.html'
     form_class = SetTransferToForm
-    permission_required = ["products.add_transfer"]
-    raise_exception = True
 
     def post(self, request, *args, **kwargs):
 

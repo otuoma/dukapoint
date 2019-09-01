@@ -27,7 +27,7 @@ class UpdateStaffForm(forms.ModelForm):
 
     class Meta:
         model = Staff
-        fields = ['first_name', 'last_name', 'email', 'phone_number', 'national_id', 'branch']
+        fields = ['first_name', 'last_name', 'email', 'phone_number', 'national_id', 'branch', 'is_active', 'is_staff', 'is_superuser']
 
 
 class CreateStaffForm(forms.ModelForm):

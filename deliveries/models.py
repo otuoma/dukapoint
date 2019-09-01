@@ -38,16 +38,3 @@ class Stock(models.Model):
     def __str__(self):
 
         return self.product.name
-
-
-class Transfer(models.Model):
-    from_branch = models.ForeignKey(Branch, on_delete=models.PROTECT)
-    to_branch = models.ForeignKey(Branch, on_delete=models.PROTECT, related_name='to_branch')
-    quantity = models.IntegerField()
-    datetime = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(
-        max_length=150,
-        choices=(('transit', 'Transit'), ('received', 'Received')),
-        default='transit'
-    )
-

@@ -11,6 +11,7 @@ from suppliers.models import Supplier
 class DeleteBranch(PermissionRequiredMixin, DeleteView):
     permission_required = ['branches.delete_branch']
     raise_exception = True
+    permission_denied_message = "You dont have permission to delete branch"
     model = Branch
 
     def get_success_url(self):
@@ -23,6 +24,7 @@ class DeleteBranch(PermissionRequiredMixin, DeleteView):
 class UpdateBranch(PermissionRequiredMixin, UpdateView):
     permission_required = ['branches.change_branch']
     raise_exception = True
+    permission_denied_message = "You dont have permission to change branch"
     form_class = UpdateBranchForm
     template_name = 'branches/edit_branch.html'
     model = Branch
@@ -54,6 +56,7 @@ class UpdateBranch(PermissionRequiredMixin, UpdateView):
 class CreateBranch(PermissionRequiredMixin, CreateView):
     permission_required = ['branches.add_branch']
     raise_exception = True
+    permission_denied_message = "You dont have permission to add branch"
     model = Branch
     template_name = 'branches/create_branch.html'
     form_class = CreateBranchForm
@@ -108,7 +111,8 @@ class CreateBranch(PermissionRequiredMixin, CreateView):
 
 class Home(PermissionRequiredMixin, TemplateView):
     template_name = 'branches/home.html'
-    permission_required = ['branches.add_branch']
+    permission_required = ['branches.view_branch']
+    permission_denied_message = "You dont have permission to view branches"
     raise_exception = True
 
     def get_context_data(self, **kwargs):

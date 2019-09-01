@@ -9,7 +9,8 @@ from django.contrib.auth.mixins import PermissionRequiredMixin
 
 class DeleteSupplier(PermissionRequiredMixin, DeleteView):
     model = Supplier
-    permission_required = []
+    permission_required = ['suppliers.delete_supplier']
+    permission_denied_message = "You dont have permission to delete supplier"
     raise_exception = True
     success_url = reverse_lazy('suppliers:home')
 
@@ -23,7 +24,8 @@ class DeleteSupplier(PermissionRequiredMixin, DeleteView):
 class UpdateSupplier(PermissionRequiredMixin, UpdateView):
     template_name = 'suppliers/edit_supplier.html'
     raise_exception = True
-    permission_required = []
+    permission_required = ['suppliers.change_supplier']
+    permission_denied_message = "You dont have permission to change supplier"
     form_class = UpdateSupplierForm
 
     def get(self, request, *args, **kwargs):
@@ -66,7 +68,8 @@ class CreateSupplier(PermissionRequiredMixin, CreateView):
     model = Supplier
     template_name = 'suppliers/create_supplier.html'
     raise_exception = True
-    permission_required = []
+    permission_required = ['suppliers.add_supplier']
+    permission_denied_message = "You dont have permission to add supplier"
     form_class = CreateSupplierForm
 
     def get(self, request, *args, **kwargs):
@@ -136,8 +139,8 @@ class CreateSupplier(PermissionRequiredMixin, CreateView):
 class Home(PermissionRequiredMixin, TemplateView):
     template_name = 'suppliers/home.html'
     raise_exception = True
-    permission_required = ['view_suppliers']
-    permission_denied_message = "403: Permission Denied"
+    permission_required = ['suppliers.view_supplier']
+    permission_denied_message = "You dont have permission to view suppliers"
 
     def get(self, request, *args, **kwargs):
 

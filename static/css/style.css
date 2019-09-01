@@ -154,3 +154,8 @@ a[data-toggle="collapse"] {
     margin-bottom: 8px;
 }
 .errorlist{color: red; list-style: square; font-size: 12px;}
+
+.helptext{
+    font-size: smaller;
+}
+fieldset{border: solid 2px #ddd; padding: 5px;}

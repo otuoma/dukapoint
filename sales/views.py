@@ -13,8 +13,9 @@ from django.db.models import Sum
 
 
 class ReportsHome(PermissionRequiredMixin, FormView):
-    permission_required = ["sales.view_sales"]
+    permission_required = ["sales.view_sale"]
     raise_exception = True
+    permission_denied_message = "You dont have permission to view sales"
     template_name = 'sales/reports_home.html'
     form_class = SalesFiltersForm
 
@@ -58,6 +59,7 @@ class ReportsHome(PermissionRequiredMixin, FormView):
 class CheckOut(PermissionRequiredMixin, FormView):
     permission_required = ["sales.add_sale"]
     raise_exception = True
+    permission_denied_message = "You dont have permission to add sales"
     form_class = SaleForm
     template_name = 'sales/check_out.html'
 
@@ -109,7 +111,8 @@ class CheckOut(PermissionRequiredMixin, FormView):
 
 
 class DeleteCartProduct(PermissionRequiredMixin, TemplateView):
-    permission_required = ["products.view_products"]
+    permission_required = ["sales.add_sale"]
+    permission_denied_message = "You dont have permission to make sales"
     raise_exception = True
 
     def get(self, request, *args, **kwargs):
@@ -141,8 +144,9 @@ class DeleteCartProduct(PermissionRequiredMixin, TemplateView):
 
 class AddToCart(PermissionRequiredMixin, FormView):
     """Adds items to session"""
-    permission_required = ["products.view_products"]
+    permission_required = ["sales.add_sale"]
     raise_exception = True
+    permission_denied_message = "You dont have permission to make sales"
     form_class = AddToCartForm
 
     def post(self, request, *args, **kwargs):
@@ -204,17 +208,10 @@ class AddToCart(PermissionRequiredMixin, FormView):
 
 
 class Home(PermissionRequiredMixin, TemplateView):
-
+    permission_required = ['sales.add_sale']
     template_name = 'sales/pos.html'
-    permission_denied_message = "You dont have permission to access page"
-
-    def has_permission(self):
-
-        if self.request.user.is_staff or self.request.user.is_superuser:
-
-            return True
-        else:
-            return False
+    raise_exception = True
+    permission_denied_message = "You dont have permission to make sales"
 
     def get(self, request, *args, **kwargs):
 
@@ -226,7 +223,10 @@ class Home(PermissionRequiredMixin, TemplateView):
         return render(request, self.template_name, {'cart_products': data})
 
 
-class ClearCart(TemplateView):
+class ClearCart(PermissionRequiredMixin, TemplateView):
+    permission_required = ['sales.add_sale']
+    raise_exception = True
+    permission_denied_message = "You dont have permission to make sales"
 
     def get(self, request, *args, **kwargs):
 
@@ -240,7 +240,8 @@ class ClearCart(TemplateView):
 
 
 class SearchProducts(PermissionRequiredMixin, FormView):
-    permission_required = ["products.view_products"]
+    permission_required = ['sales.add_sale']
+    permission_denied_message = "You dont have permission to make sales"
     raise_exception = True
 
     def get(self, request, *args, **kwargs):
@@ -275,3 +276,4 @@ class SearchProducts(PermissionRequiredMixin, FormView):
             response = json.dumps({'err': err_str})
 
         return HttpResponse(response, content_type="text/json")
+

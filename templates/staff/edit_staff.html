@@ -51,6 +51,11 @@
                             <tr><td>Branch</td><td>{{ person.branch }}</td></tr>
                         </tbody>
                     </table>
+                    {% if request.user.is_superuser %}
+                        <a href="{% url 'staff:set-permissions' pk=person.pk %}" class="btn btn-outline-info">
+                            Set Permissions
+                        </a>
+                    {% endif %}
                 </div>
             </div>
             <div class="row">

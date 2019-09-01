@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% block title %}Set Permissions{% endblock %}
+{% block page_content %}
+    <nav class="navbar navbar-expand-lg context-bar">
+      <a class="navbar-brand" href="#"> <i class="fa fa-briefcase"></i> Staff Permissions</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav ml-auto">
+            <a class="nav-item nav-link" href="{% url 'staff:home' %}">
+              <i class="fa fa-list"></i> All staff
+            </a>
+            <a class="nav-item nav-link" href="{% url 'staff:update-staff' pk=staff.pk %}">
+              <i class="fa fa-user"></i> Details
+            </a>
+        </div>
+      </div>
+    </nav>
+
+    {% include 'messages.html' %}
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="">Set Permissions</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" class="small">
+                    <button type="submit" class="btn btn-outline-info btn-block">Update Permissions</button>
+                        {% csrf_token %}
+                        {% for perms in perms_list %}
+                            {% for key, value in perms.items %}
+                                <fieldset class="form-group">
+                                <legend class="col-form-label"> {{ key|capfirst }} roles </legend>
+                                 {% for perm in value %}
+                                     <div class="form-check-inline">
+                                        <label class="form-check-label">
+                                            {% if perm.codename in staff_perms %}
+                                                <input type="checkbox" class="form-check-input" value="{{ perm.codename }}" name="{{ perm.codename }}" checked />
+                                            {% else %}
+                                                <input type="checkbox" class="form-check-input" value="{{ perm.codename }}" name="{{ perm.codename }}" />
+                                            {% endif %}
+                                            {{ perm.name }}
+                                        </label>
+                                    </div>
+                                 {% endfor %}
+                                </fieldset>
+                            {% endfor %}
+                        {% endfor %}
+                        <button type="submit" class="btn btn-outline-info btn-block">Update</button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="">{{ staff.get_full_name }}'s Permissions</h5>
+                </div>
+                <div class="card-body">
+                {% if staff_perms_query|length > 0 %}
+                    <ul>
+                        {% for staff_perm in staff_perms_query %}
+                            <li>
+                                {{ staff_perm.content_type|capfirst }} :  {{ staff_perm.name }}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <div class="alert alert-info"> No permissions are set for {{ staff.last_name }}</div>
+                {% endif %}
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock page_content %}

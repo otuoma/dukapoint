@@ -48,7 +48,7 @@ These instructions are for quickly testing the system on Linux (Ubuntu or Debian
     
     Extract the file contents into `/opt/dukapoint/` so that its contents are:
     
-    
+```    
     --branches
     
     --customers
@@ -80,6 +80,7 @@ These instructions are for quickly testing the system on Linux (Ubuntu or Debian
     --README.md
     
     --requirements.txt     
+```
 
 Next, you need to install django and all the packages required by dukapoint.
 You can do this with the command below:
@@ -201,7 +202,7 @@ system (tested on Windows 10)
     
     Extract the file contents into `C:\dukapoint` so that its contents are:
     
-    
+```    
     --branches
     
     --customers
@@ -235,7 +236,7 @@ system (tested on Windows 10)
     --README.md
     
     --requirements.txt     
-
+```
 Next, you need to install django and all the packages required by dukapoint.
 You can do this with the command below:
 

@@ -9,8 +9,9 @@ from customers.forms import CreateCustomerForm, UpdateCustomerForm
 
 class Home(PermissionRequiredMixin, ListView):
     template_name = 'customers/home.html'
-    permission_required = ['customers.add_customer']
+    permission_required = ['customers.view_customer']
     raise_exception = True
+    permission_denied_message = "You dont have permission to view customers"
     context_object_name = 'customers'
     model = Customer
 
@@ -43,6 +44,7 @@ class Home(PermissionRequiredMixin, ListView):
 class CreateCustomer(PermissionRequiredMixin, CreateView):
     permission_required = ['customers.add_customer']
     raise_exception = True
+    permission_denied_message = "You dont have permission to add customers"
     model = Customer
     template_name = 'customers/create_customer.html'
     form_class = CreateCustomerForm
@@ -81,6 +83,7 @@ class CreateCustomer(PermissionRequiredMixin, CreateView):
 class UpdateCustomer(PermissionRequiredMixin, UpdateView):
     permission_required = ['customers.change_customer']
     raise_exception = True
+    permission_denied_message = "You dont have permission to change customers"
     template_name = 'customers/edit_customer.html'
     model = Customer
     form_class = UpdateCustomerForm
@@ -95,6 +98,7 @@ class UpdateCustomer(PermissionRequiredMixin, UpdateView):
 class DeleteCustomer(PermissionRequiredMixin, DeleteView):
     permission_required = ['customers.delete_customer']
     raise_exception = True
+    permission_denied_message = "You dont have permission to delete customers"
     model = Customer
     context_object_name = 'customer'
 

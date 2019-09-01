@@ -26,8 +26,8 @@
                 <div class="card-body">
                     <form action="{% url 'staff:create-staff' %}" method="post">{% csrf_token %}
                         {{ form.as_p }}
-
-                        <button type="submit" class="btn btn-info btn-block">Save</button>
+                        <span class="text-muted">Phone number will be used as default password</span>
+                        <button type="submit" class="btn btn-info btn-block mt-2">Save</button>
                     </form>
 
                 </div>

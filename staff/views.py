@@ -4,14 +4,72 @@ from django.views.generic import TemplateView, FormView, DeleteView
 from staff.models import Staff
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 from django.contrib.auth import authenticate, login, logout
+from staff.utils import get_all_perms, selected_perms
 from django.contrib import messages
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from staff.forms import CreateStaffForm, UpdateStaffForm, ChangeBranchForm
+from django.contrib.auth.models import Permission
+
+
+class SetPermissions(PermissionRequiredMixin, FormView):
+    template_name = 'staff/set_permissions.html'
+    perms_list = get_all_perms()
+
+    def has_permission(self):
+
+        # only allow superuser to access this view
+        if self.request.user.is_superuser:
+            return True
+        else:
+            return False
+
+    def get(self, request, *args, **kwargs):
+
+        staff = get_object_or_404(Staff, pk=self.kwargs['pk'])
+        staff_perms_query = staff.user_permissions.all()
+        staff_perms = [staff_perm.codename for staff_perm in staff_perms_query]
+
+        context = {
+            'perms_list': self.perms_list,
+            'staff_perms_query': staff_perms_query,
+            'staff_perms': staff_perms,
+            'staff': staff,
+        }
+
+        return render(request, self.template_name, context=context)
+
+    def post(self, request, *args, **kwargs):
+
+        staff = get_object_or_404(Staff, pk=self.kwargs['pk'])
+
+        perms_selected = selected_perms(form_data=request.POST)
+        staff_perms_query = staff.user_permissions.all()
+        staff_perms = [staff_perm.codename for staff_perm in staff_perms_query]
+
+        # remove existing perm that is not selected
+        for perm in staff_perms:
+            if perm not in perms_selected:
+                staff.user_permissions.remove(
+                    Permission.objects.get(codename=perm)
+                )
+
+        # add new selected perm
+        for perm in perms_selected:
+            if perm not in staff_perms:
+                staff.user_permissions.add(
+                    Permission.objects.get(codename=perm)
+                )
+
+        messages.success(request, f"Success, updated permissions for {staff.last_name}", extra_tags="alert alert-success")
+
+        return redirect(to=f"/staff/set-permissions/{staff.pk}/")
 
 
 class ChangeBranch(PermissionRequiredMixin, FormView):
+    """Change the branch a staff belongs to"""
     permission_required = ['staff.change_staff']
     raise_exception = True
+    permission_denied_message = "You dont have permission to change staff"
     form_class = ChangeBranchForm
     template_name = "staff/change_branch.html"
 
@@ -29,9 +87,19 @@ class ChangeBranch(PermissionRequiredMixin, FormView):
 
 
 class UpdatePassword(PermissionRequiredMixin, FormView):
-    permission_required = ['staff.change_staff']
+    permission_denied_message = "You dont have permission to change staff"
     raise_exception = True
     form_class = PasswordChangeForm
+
+    def has_permission(self):
+
+        staff = get_object_or_404(Staff, pk=self.kwargs['pk'])
+
+        # Allow logged-in user or superuser to change password
+        if staff.pk == self.request.user.pk or self.request.user.is_superuser:
+            return True
+        else:
+            return False
 
     def post(self, request, *args, **kwargs):
 
@@ -51,7 +119,8 @@ class UpdatePassword(PermissionRequiredMixin, FormView):
 
 
 class DeleteStaff(PermissionRequiredMixin, DeleteView):
-    permission_required = ['staff.change_staff']
+    permission_required = ['staff.delete_staff']
+    permission_denied_message = "You dont have permission to delete staff"
     raise_exception = True
     model = Staff
 
@@ -65,6 +134,7 @@ class DeleteStaff(PermissionRequiredMixin, DeleteView):
 class UpdateStaff(PermissionRequiredMixin, FormView):
     template_name = 'staff/edit_staff.html'
     permission_required = ['staff.change_staff']
+    permission_denied_message = "You dont have permission to change staff"
     raise_exception = True
     form_class = UpdateStaffForm
     password_form = PasswordChangeForm
@@ -98,10 +168,14 @@ class UpdateStaff(PermissionRequiredMixin, FormView):
 
         person = get_object_or_404(Staff, pk=self.kwargs['pk'])
 
+        password_form = self.password_form(user=person)
+
+        password_form.fields['old_password'].widget.attrs.pop("autofocus", None)
+
         context = {
             'form': self.form_class(instance=person),
             'person': person,
-            'password_form': self.password_form(user=person)
+            'password_form': password_form
         }
 
         return render(request, self.template_name, context=context)
@@ -110,6 +184,7 @@ class UpdateStaff(PermissionRequiredMixin, FormView):
 class CreateStaff(PermissionRequiredMixin, FormView):
     template_name = 'staff/create_staff.html'
     permission_required = ['staff.add_staff']
+    permission_denied_message = "You dont have permission to add staff"
     form_class = CreateStaffForm
 
     def get(self, request, *args, **kwargs):
@@ -147,6 +222,7 @@ class CreateStaff(PermissionRequiredMixin, FormView):
         if form.is_valid():
 
             staff_obj = form.save(commit=False)
+            staff_obj.is_staff = True
 
             # Set default password to phone_number
             staff_obj.set_password(
@@ -248,6 +324,7 @@ class Login(FormView):
 class Home(PermissionRequiredMixin, TemplateView):
     template_name = 'staff/home.html'
     permission_required = ['staff.view_staff']
+    permission_denied_message = "You dont have permission to view staff"
     raise_exception = True
 
     def get(self, request, *args, **kwargs):

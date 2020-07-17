@@ -9,7 +9,7 @@ from django.shortcuts import redirect, render
 from django.contrib import messages
 from sales.models import Sale
 from deliveries.models import Stock
-from django.db.models import Sum
+from django.db.models import Sum, Q
 
 
 class ReportsHome(PermissionRequiredMixin, FormView):
@@ -247,13 +247,10 @@ class SearchProducts(PermissionRequiredMixin, FormView):
     def get(self, request, *args, **kwargs):
 
         try:
-
             products = Stock.objects.filter(
-                product__name__contains=request.GET.get('product'),
+                Q(product__name__contains=request.GET.get('product')) | Q(product__sku_code__contains=request.GET.get('product')),
                 current_branch_id=request.user.branch_id
             )
-
-            print(products)
 
             product_list = []
 
@@ -265,6 +262,7 @@ class SearchProducts(PermissionRequiredMixin, FormView):
                     'retail_price': item.retail_price,
                     'wholesale_price': item.wholesale_price,
                     'buying_price': item.buying_price,
+                    'sku': item.product.sku_code,
                 })
 
             response = json.dumps(product_list)

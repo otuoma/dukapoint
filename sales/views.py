@@ -10,6 +10,7 @@ from django.contrib import messages
 from sales.models import Sale
 from deliveries.models import Stock
 from django.db.models import Sum
+from django.conf import settings
 
 
 class ReportsHome(PermissionRequiredMixin, FormView):
@@ -65,6 +66,8 @@ class CheckOut(PermissionRequiredMixin, FormView):
 
     def post(self, request, *args, **kwargs):
 
+        products_list = []
+
         for product in request.session['cart_products']:
 
             product_obj = Product.objects.get(pk=product['product_id'])
@@ -94,6 +97,17 @@ class CheckOut(PermissionRequiredMixin, FormView):
             branch_stock.quantity = branch_stock.quantity - product['quantity']
 
             branch_stock.save()
+
+        #     Build list dictionary for printing
+            if settings.PRINT_RECEIPTS:
+                products_list.append({
+                    'product_id': product_obj.pk,
+                    'product_name': product_obj.name,
+                    'quantity': product['quantity'],
+                    'unit_price': product['unit_price'],
+                    'total': product['unit_price']*product['quantity'],
+                    'sale_total': sale.total,
+                })
 
         del request.session['cart_products']
         messages.success(request, 'Sale completed successfully', extra_tags='alert alert-success')
@@ -247,25 +261,28 @@ class SearchProducts(PermissionRequiredMixin, FormView):
     def get(self, request, *args, **kwargs):
 
         try:
-
             products = Stock.objects.filter(
                 product__name__contains=request.GET.get('product'),
                 current_branch_id=request.user.branch_id
-            )
-
-            print(products)
+            ).reverse()
 
             product_list = []
+            product_names = []
 
             for item in products:
-                product_list.append({
-                    'name': item.product.name,
-                    'id': item.product.pk,
-                    'quantity': item.quantity,
-                    'retail_price': item.retail_price,
-                    'wholesale_price': item.wholesale_price,
-                    'buying_price': item.buying_price,
-                })
+
+                if item.product.name not in product_names:
+
+                    product_list.append({
+                        'name': item.product.name,
+                        'id': item.product.pk,
+                        'quantity': item.quantity,
+                        'retail_price': item.retail_price,
+                        'wholesale_price': item.wholesale_price,
+                        'buying_price': item.buying_price,
+                    })
+
+                    product_names.append(item.product.name)
 
             response = json.dumps(product_list)
 

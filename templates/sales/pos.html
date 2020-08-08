@@ -22,7 +22,6 @@
                     <input id="product-search" class="form-control" />
                 </div>
             </div>
-
             <div class="card mt-3">
                 <div class="card-body text-center">
                     <div id="product-details">
@@ -92,13 +91,13 @@
                         {% endif %}
                     </div>
                     <div class="row">
-                            <div class="col-6" id="cart-btns">
+                            <div class="col-6 text-center" id="cart-btns">
                                 <a href="{% url 'sales:check-out' %}" class="btn btn-info">
                                     Check-out <i class="fa fa-flag-checkered"></i>
                                 </a>
                             </div>
-                            <div class="col-6">
-                                <a href="{% url 'sales:clear-cart' %}" class="btn btn-info">Empty Cart
+                            <div class="col-6 text-center">
+                                <a href="{% url 'sales:clear-cart' %}" class="btn btn-outline-danger">Empty Cart
                                     <i class="fa fa-flag-checkered"></i>
                                 </a>
                             </div>

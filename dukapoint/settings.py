@@ -70,7 +70,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'dukapoint',
         'USER': 'root',
-        'PASSWORD': 'root101',
+        'PASSWORD': 'rootpassword',
         'HOST': '127.0.0.1',
         'PORT': '3306',
     }
@@ -142,6 +142,7 @@ en_formats.DATE_INPUT_FORMATS = ['%d-%m-%Y']
 en_formats.DATETIME_INPUT_FORMATS = ['%d-%m-%Y %H:%i:%s']
 
 AUTH_USER_MODEL = 'staff.Staff'
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 SESSION_COOKIE_HTTPONLY = True

@@ -2,7 +2,7 @@ asgiref==3.5.2
 certifi==2022.5.18.1
 chardet==4.0.0
 charset-normalizer==2.0.12
-Django==4.0.7
+Django==4.0.8
 idna==3.3
 mysql-connector-python==8.0.29
 mysqlclient==2.1.0

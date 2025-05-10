@@ -11,9 +11,9 @@ These instructions are for quickly testing the system on Linux (Ubuntu or Debian
     sudo apt-get update && sudo apt-get upgrade -y
     ```
      
-     **Install python**
+     **Install python and other dependencies**
     ```
-    sudo apt install python3 python3-pip python3-venv -y
+    sudo apt install python3 python3-pip python3-venv build-essential libjpeg-dev zlib1g-dev -y
     ```
 2. **Set-up a virtual environment**
       

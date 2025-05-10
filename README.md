@@ -13,11 +13,9 @@ These instructions are for quickly testing the system on Linux (Ubuntu or Debian
      
      **Install python**
     ```
-    sudo apt-get install python3 -y
+    sudo apt-get install python3 python3-pip -y
     ```
 2. **Set-up a virtual environment**
-
-    Python 3 has `pip` installed.
     
      **Virtualenv**
     

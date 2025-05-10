@@ -13,4 +13,4 @@ requests==2.27.1
 six==1.16.0
 sqlparse==0.4.2
 tzdata==2022.1
-urllib3==1.26.9
+urllib3==1.26.19

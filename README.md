@@ -13,16 +13,10 @@ These instructions are for quickly testing the system on Linux (Ubuntu or Debian
      
      **Install python**
     ```
-    sudo apt-get install python3 python3-pip -y
+    sudo apt install python3 python3-pip python3-venv -y
     ```
 2. **Set-up a virtual environment**
-    
-     **Virtualenv**
-    
-    Open the terminal and run the command:
-    ```
-    pip install virtualenv
-    ```    
+      
     Create a directory for the project at a location of your choice e.g. `/opt/dukapoint`. 
     This is where the dukapoint source code will be downloaded to.
     
@@ -32,12 +26,12 @@ These instructions are for quickly testing the system on Linux (Ubuntu or Debian
     ``` 
     Now create a virtual environment with:
     ```
-    virtualenv env
+    python3 -m venv venv
     ```
     Then activate the virtual env with:
     
     ```
-     ./env/Scripts/activate
+     source ./venv/bin/activate
     ```    
     
 3. **Download and install dukapoint**

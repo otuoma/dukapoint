@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+
+{% block title %}Transfer Products{% endblock title %}
+
+{% load static %}
+{% block page_style %}
+    <link href="{% static 'autocomplete/easy-autocomplete.min.css' %}" rel="stylesheet" type="text/css">
+    <style>
+        th{background-color: rgb(233, 236, 239);}
+    </style>
+{% endblock page_style %}
+{% block page_js %}
+    <script src="{% static 'autocomplete/jquery-1.11.2.min.js' %}"></script>
+	<script src="{% static 'autocomplete/jquery.easy-autocomplete.min.js' %}" type="text/javascript" ></script>
+    <script>
+    $(document).ready(function () {
+
+        $('#date_from').datepicker({
+            changeMonth: true,
+            changeYear: true,
+            dateFormat: 'dd-mm-yy'
+        });
+        $('#date_to' ).datepicker({
+            changeMonth: true,
+            changeYear: true,
+            dateFormat: 'dd-mm-yy'
+        });
+    });
+
+    </script>
+{% endblock page_js %}
+
+{% block page_content %}
+    <nav class="navbar navbar-expand-lg context-bar">
+      <a class="navbar-brand" href="#">
+          <i class="fa fa-truck"></i> Transfer Stock to {{ request.session.transfer_to }}
+      </a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav ml-auto">
+          <a class="nav-item nav-link" href="{% url 'products:view-transfers' %}">
+              <i class="fa fa-plus-circle"></i> View Transfers
+          </a>
+        </div>
+      </div>
+    </nav>
+    {% include 'messages.html' %}
+
+    <div class="row">
+        <div class="col-4">
+            <div class="card">
+                <div class="card-body">
+                    <form method="post" action="{% url 'products:add-product' %}">{% csrf_token %}
+                        {{ form.as_p }}
+                        <div class="row">
+                            <div class="col">
+                                <button type="submit" class="btn btn-default btn-block">
+                                    Add <i class="fa fa-plus"></i>
+                                </button>
+                            </div>
+                            <div class="col">
+
+                            </div>
+                            <div class="col">
+                                <button type="reset" class="btn btn-default btn-block">
+                                    Reset <i class="fa fa-remove"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <p class="mt-3">
+                            <a href="{% url 'products:set-transfer-to' %}" class="btn btn-info btn-block">
+                                Change branch to <i class="fa fa-edit"></i>
+                            </a>
+                        </p>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-8">
+            <div class="card">
+                <div class="card-body">
+                    {% if request.session.products|length > 0 %}
+
+                        <table class="table table-striped table-responsive table-bordered table-sm">
+                            <thead>
+                                <th class="text-center"><i class="fa fa-remove"></i> </th>
+                                <th>Item</th>
+                                <th class="text-center">Qty</th>
+                                <th class="text-center">Unit cost</th>
+                                <th class="text-center">Total</th>
+                            </thead>
+                            {% for product in request.session.products %}
+                                <tr>
+                                    <td class="text-center">
+                                        <a href="{% url 'products:delete-cart-product' product_id=product.product_id %}">
+                                            <i class="fa fa-trash text-danger"></i>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'products:product-detail' pk=product.product_id %}">{{ product.product_name }}</a>
+                                    </td>
+                                    <td class="text-center">{{ product.quantity }}</td>
+                                    <td class="text-center">{{ product.unit_cost }}</td>
+                                    <td class="text-center">{{ product.total }}</td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+
+                        <div class="row">
+                            <div class="col-3">
+                                <a href="{% url 'products:process-transfer' %}" class="btn btn-info">Submit <i class="fa fa-send"> </i></a>
+                            </div>
+                            <div class="col-3"></div>
+                            <div class="col-3">
+                                <a href="{% url 'products:clear-list' %}" class="btn btn-light">
+                                    Clear list <i class="fa fa-eraser text-danger"></i>
+                                </a>
+                            </div>
+                            <div class="col-3">
+                                <a href="" class="btn btn-light">
+                                    Total {{ request.session.products_total }}
+                                </a>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info">No items in list</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let options = {
+
+            url: "{% url 'deliveries:search-product' %}?product=" + $("#product_id").val(),
+
+            getValue: "product_name",
+
+            template: {
+                type: "description",
+                fields: {
+                    description: "product_name"
+                }
+            },
+
+            list: {
+                match: {enabled: true,},
+                onChooseEvent: function() {
+                    let product_name = $("#product_id").getSelectedItemData().product_name;
+                    let product_id = $("#product_id").getSelectedItemData().product_id;
+
+                    $("input#product_id").val(product_id);
+                    $("input#product_id").attr("readonly", true);
+
+                    $("label[for='product_id']").html("Product: <strong style='color: black;'>"+product_name+"</strong>");
+                }
+            },
+
+            theme: "plate-dark"
+        };
+
+        $("#product_id").easyAutocomplete(options);
+    </script>
+
+{% endblock page_content %}

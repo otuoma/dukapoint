@@ -1,0 +1,119 @@
+<nav id="sidebar">
+        <div class="sidebar-header">
+            <h3>BS POS</h3>
+            <strong>BS</strong>
+        </div>
+
+        <ul class="list-unstyled components">
+            <li class="sidebar-li">
+                <a href="{% url 'home' %}"><i class="fas fa-home"></i> Home</a>
+            </li>
+            <li class="sidebar-li">
+                <a href="#salesSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                    <i class="fas fa-handshake"></i> Sales
+                </a>
+                <ul class="collapse list-unstyled" id="salesSubmenu">
+                    <li>
+                        <a href="{% url 'sales:home' %}">
+                            <i class="fa fa-list"></i> POS
+                        </a>
+                    </li>
+                    <li>
+                         <a href="{% url 'sales:reports-home' %}">
+                             <i class="fa fa-shopping-bag"></i> Reports</a>
+                    </li>
+                    <li>
+                         <a href="{% url 'returns:home' %}">
+                             <i class="fa fa-shopping-bag"></i> Returns</a>
+                    </li>
+                </ul>
+            </li>
+            <li class="sidebar-li">
+                <a href="#productsSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                    <i class="fas fa-shopping-basket"></i> Products
+                </a>
+                <ul class="collapse list-unstyled" id="productsSubmenu">
+                    <li>
+                        <a href="{% url 'products:home' %}">
+                            <i class="fa fa-list"></i> View</a>
+                    </li>
+                    <li>
+                         <a href="{% url 'products:create-product' %}">
+                             <i class="fa fa-shopping-bag"></i> Add New</a>
+                    </li>
+                    <li>
+                         <a href="{% url 'deliveries:home' %}">
+                             <i class="fa fa-shopping-basket"></i> Deliveries</a>
+                    </li>
+                    <li>
+                         <a href="{% url 'products:view-transfers' %}">
+                             <i class="fa fa-shopping-basket"></i> Transfers</a>
+                    </li>
+                </ul>
+            </li>
+            <li class="sidebar-li">
+                <a href="#customersSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                    <i class="fas fa-handshake"></i> Customers
+                </a>
+                <ul class="collapse list-unstyled" id="customersSubmenu">
+                    <li>
+                        <a href="{% url 'customers:home' %}">
+                            <i class="fa fa-list"></i> View
+                        </a>
+                    </li>
+                    <li>
+                         <a href="{% url 'customers:create-customer' %}">
+                             <i class="fa fa-shopping-bag"></i> Add New</a>
+                    </li>
+                </ul>
+            </li>
+            <li class="sidebar-li">
+                <a href="#suppliersSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                    <i class="fas fa-truck"></i> Suppliers
+                </a>
+                <ul class="collapse list-unstyled" id="suppliersSubmenu">
+                    <li>
+                        <a href="{% url 'suppliers:home' %}">
+                            <i class="fa fa-list"></i> View</a>
+                    </li>
+                    <li>
+                         <a href="{% url 'suppliers:create-supplier' %}">
+                             <i class="fa fa-user-plus"></i> Add New
+                         </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="sidebar-li">
+                <a href="#pageSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                    <i class="fas fa-users"></i> Staff
+                </a>
+                <ul class="collapse list-unstyled" id="pageSubmenu">
+                    <li>
+                        <a href="{% url 'staff:home' %}">
+                            <i class="fa fa-list"></i> View</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'staff:create-staff' %}">
+                            <i class="fa fa-user-plus"></i> Add New</a>
+                    </li>
+                </ul>
+            </li>
+
+            <li class="sidebar-li">
+                <a href="#systemSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                    <i class="fas fa-cog"></i> System
+                </a>
+                <ul class="collapse list-unstyled" id="systemSubmenu">
+                    <li>
+                        <a href="{% url 'branches:home' %}">
+                            <i class="fa fa-code-branch"></i> Branches</a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <i class="fa fa-cog"></i> Administration </a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+
+    </nav>

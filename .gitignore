@@ -1,0 +1,14 @@
+# sqlite db file
+db.sqlite3
+*.pyc
+# migration files and pycache dir files
+000*.py*
+*/__pycache__
+
+# git and pycharm .idea dirs
+.idea
+.git
+#dukapoint/settings.py
+
+#The virtual env
+venv

@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}Products{% endblock title %}
+{% block page_content %}
+    <nav class="navbar navbar-expand-lg context-bar">
+      <a class="navbar-brand" href="#">
+          <i class="fa fa-shopping-basket"></i> Products &gt; Stock Control
+      </a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav ml-auto">
+          <a class="nav-item nav-link" href="">
+              <i class="fa fa-plus-circle"></i> Post Stock
+          </a>
+        </div>
+      </div>
+    </nav>
+
+    {% include 'messages.html' %}
+
+    <div class="card ">
+        <div class="card-body">
+            {% if stock_list|length > 0 %}
+
+                <table class="table table-striped table-bordered table-hover table-condensed" id="myTable">
+                    <thead>
+                        <th>#</th><th>Name</th><th>SKU Code</th><th>Supplier</th><th>Buying</th><th>Retail</th>
+                    </thead>
+                    <tbody>
+                        {% for item in stock_list %}
+                            <tr>
+                                <td>{{ item.date }}</td>
+                                <td>
+                                    <a href="{% url 'products:product-detail' pk=item.pk %}"> {{ item.name }}</a>
+                                </td>
+                                <td>{{ item.sku_code }}</td>
+                                <td>{{ item.supplier }}</td>
+                                <td>{{ item.buying_price }}</td>
+                                <td>{{ item.retail_price }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div class="alert alert-info">No products have been added yet</div>
+            {% endif %}
+        </div>
+    </div>
+
+
+{% endblock page_content %}

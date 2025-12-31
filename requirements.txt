@@ -1,0 +1,16 @@
+asgiref==3.5.2
+certifi==2022.12.7
+chardet==4.0.0
+charset-normalizer==2.0.12
+Django==4.1.7
+idna==3.3
+# mysql-connector-python==8.0.29
+# mysqlclient==2.1.0
+Pillow==9.3.0
+protobuf==3.20.2
+pytz==2022.1
+requests==2.27.1
+six==1.16.0
+sqlparse==0.4.2
+tzdata==2022.1
+urllib3==1.26.9

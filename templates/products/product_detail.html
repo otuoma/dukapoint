@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% block title %}Products: {{ product.name }}{% endblock title %}
+{% block page_content %}
+    <nav class="navbar navbar-expand-lg context-bar">
+      <a class="navbar-brand" href="#">
+          <i class="fa fa-shopping-basket"></i> Products &gt; {{ product.name }}
+      </a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav ml-auto">
+
+            <a class="nav-item nav-link" href="{% url 'deliveries:create-delivery-note' %}">
+                <i class="fa fa-plus-circle"></i> Post Stock
+            </a>
+            <a class="nav-item nav-link" href="{% url 'products:update-product' pk=product.pk %}">
+              <i class="fa fa-edit"></i> Edit
+          </a>
+        </div>
+      </div>
+    </nav>
+    {% include 'messages.html' %}
+    <div class="row">
+        <div class="col-4">
+            <div class="card">
+                {% if product.product_image %}
+                    <img class="card-img-top" src="/media/{{ product.product_image }}" alt="Card image cap">
+                {% else %}
+                    <img class="card-img-top" src="/media/product_images/product-image.png" alt="product image" height="200">
+                {% endif %}
+                <div class="card-body bg-dark text-center">
+                    <h5 class="card-title text-white">{{ product.name }}</h5>
+                    <hr class="bg-light mt-0">
+                    <p class="card-text">{{ product.description }}</p>
+                    <caption ><h5 class="mb-0 p-2" style="background: #eeeeee; font-weight: bold;">Stock Value</h5></caption>
+                    <table class="table table-bordered bg-light">
+                        <thead style="background: aliceblue;">
+                            <th>Cost</th><th>Wholesale</th><th>Retail</th>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>{{ stock_vals.cost_value }}</td>
+                                <td>{{ stock_vals.wholesale_value }}</td>
+                                <td>{{ stock_vals.retail_value }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card-body bg-dark text-center">
+                    <hr class="bg-light mt-0">
+                    <a href="" class="card-link text-light">Stock Posts</a>
+                    <a href="" class="card-link text-light">Edit Image</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-8">
+            <div class="card ">
+                <div class="card-header">
+                    <h4 class="card-title">{{ product.name }} details</h4>
+                </div>
+                <div class="card-body">
+                    <table class="table table-bordered table-striped table-sm">
+                        <tbody class="">
+                        <tr><td>Qty in stock</td><td>{{ stock_vals.quantity }} @{{ request.user.branch.name }} </td></tr>
+                        <tr><td>Buying price</td><td>{{ stock_vals.buying_price }}</td></tr>
+                        <tr><td>Retail price</td><td>{{ stock_vals.retail_price }}</td></tr>
+                        <tr><td>Wholesale price</td><td>{{ stock_vals.wholesale_price }}</td></tr>
+                        <tr><td>Supplier</td><td>{{ stock_vals.supplier }}</td></tr>
+                        <tr><td>Manufacturer</td><td>{{ product.manufacturer }}</td></tr>
+                        <tr><td>Sku Code</td><td>{{ product.sku_code }}</td></tr>
+                        <tr><td>Created</td><td>{{ product.created|date:'d-m-Y H:i:s' }}</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock page_content %}

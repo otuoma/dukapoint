@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block title %}Set Supplier{% endblock title %}
+{% block page_content %}
+    <nav class="navbar navbar-expand-lg context-bar">
+      <a class="navbar-brand" href="#">
+          <i class="fa fa-truck-loading"> </i> Set Supplier
+      </a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav ml-auto">
+          <a class="nav-item nav-link" href="{% url 'deliveries:home' %}">
+              <i class="fa fa-plus-circle"></i> View Deliveries
+          </a>
+        </div>
+      </div>
+    </nav>
+
+    {% include 'messages.html' %}
+
+    <div class="card ">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-6">
+                    <form action="{% url 'deliveries:set-supplier' %}" method="post">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <p class="p-4">
+                            <button type="submit" class="btn btn-info btn-block">
+                                Next <i class="fa fa-arrow-right"></i>
+                            </button>
+                        </p>
+                    </form>
+                </div>
+                <div class="col-6">
+                    <div class="card">
+                        <div class="card-body" style="background-color: #eee;">
+                            Set the supplier and click next to start processing the delivery.
+                            To create a new supplier, <a href="{% url 'suppliers:create-supplier' %}">click here</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock page_content %}

@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block title %}Delete Branch{% endblock title %}
+{% block page_content %}
+    <nav class="navbar navbar-expand-lg context-bar">
+      <a class="navbar-brand" href="#"> <i class="fa fa-shopping-basket"></i> Branches</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav ml-auto">
+            <a class="nav-item nav-link" href="{% url 'branches:update-branch' pk=branch.pk %}">
+              <i class="fa fa-edit"></i> Edit
+          </a>
+          <a class="nav-item nav-link" href="{% url 'branches:create-branch' %}">
+              <i class="fa fa-plus-circle"></i> Add New
+          </a>
+
+            <a class="nav-item nav-link" href="{% url 'branches:home' %}">
+              <i class="fa fa-list"></i> View
+            </a>
+        </div>
+      </div>
+    </nav>
+
+    {% include 'messages.html' %}
+
+    <div class="row">
+        <div class="col-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="">Delete {{ branch.name }}</h5>
+                </div>
+                <div class="card-body">
+                    <h5 class="text-danger">Proceed to delete {{ branch.name }} ?</h5>
+                    <form action="{% url 'branches:delete-branch' pk=branch.pk %}" method="post">{% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-block">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="">{{ branch.name }} Details</h5>
+                </div>
+                <div class="card-body">
+                    {% if branch %}
+                        <table class="table table-hover table-striped table-responsive">
+                            <tbody>
+                                <tr><td>Name</td><td>{{ branch.name }}</td></tr>
+                                <tr><td>Phone</td><td>{{ branch.primary_phone }}</td></tr>
+                                <tr><td>Secondary Phone</td><td>{{ supplier.secondary_phone }}</td></tr>
+                                <tr><td>Email</td><td>{{ supplier.email }}</td></tr>
+                                <tr><td>Created</td><td>{{ supplier.date_created|date:'d-m-Y H:i' }}</td></tr>
+                            </tbody>
+                        </table>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+{% endblock page_content %}

@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block title %}Branches{% endblock title %}
+{% block page_content %}
+    <nav class="navbar navbar-expand-lg context-bar">
+      <a class="navbar-brand" href="#">
+          <i class="fa fa-code-branch"></i> Branches
+      </a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav ml-auto">
+          <a class="nav-item nav-link" href="{% url 'branches:create-branch' %}">
+              <i class="fa fa-plus-circle"></i> Add New
+          </a>
+        </div>
+      </div>
+    </nav>
+
+    {% include 'messages.html' %}
+
+    <div class="card ">
+        <div class="card-body">
+            {% if branches|length > 0 %}
+
+                <table class="table table-striped table-bordered table-hover table-condensed" id="myTable">
+                    <thead>
+                        <th>#</th><th>Name</th><th>Code</th><th>Location</th><th>Phone</th><th>Email</th><th>Created</th>
+                    </thead>
+                    <tbody>
+                        {% for branch in branches %}
+                            <tr>
+                                <td>{{ branch.num }}.</td>
+                                <td>
+                                    <a href="{% url 'branches:update-branch' pk=branch.pk %}"> {{ branch.name }}</a>
+                                </td>
+                                <td>{{ branch.branch_code }}</td>
+                                <td>{{ branch.location }}</td>
+                                <td>{{ branch.phone_contact }}</td>
+                                <td>{{ branch.email }}</td>
+                                <td>{{ branch.created|date:'d-m-Y' }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div class="alert alert-info">No branches have been added yet</div>
+            {% endif %}
+        </div>
+    </div>
+
+
+{% endblock page_content %}

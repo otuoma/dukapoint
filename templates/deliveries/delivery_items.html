@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block title %}Delivery {{ delivery.delivery_number }} from {{ delivery.received_from.name }} on {{ delivery.date|date:"d-m-Y" }}{% endblock title %}
+
+{% load static %}
+
+{% block page_content %}
+    <nav class="navbar navbar-expand-lg context-bar">
+      <a class="navbar-brand" href="#">
+          <i class="fa fa-users"></i> Delivery {{ delivery.delivery_number }} from {{ delivery.received_from.name }}
+      </a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav ml-auto">
+          <a class="nav-item nav-link" href="{% url 'deliveries:home' %}">
+              <i class="fa fa-plus-circle"></i> View Deliveries
+          </a>
+        </div>
+      </div>
+    </nav>
+
+    {% include 'messages.html' %}
+    <form method="post">{% csrf_token %}
+        <div class="form-row">
+            <div class="col"></div>
+        </div>
+    </form>
+    <div class="row">
+        <div class="col-9">
+            <div class="card ">
+                <div class="card-body">
+                    {% if stock_list|length > 0 %}
+
+                        <table class="table table-striped table-bordered table-hover table-sm" id="myTable">
+                            <thead class="bg-light">
+                                <th>#</th><th>Item</th><th>Qty</th><th>Buying</th><th>Total</th>
+                            </thead>
+                            <tbody>
+                                {% for item in stock_list %}
+                                    <tr>
+                                        <td>{{ item.num }}</td>
+                                        <td>
+                                            <a href="{% url 'products:product-detail' pk=item.product_id %}"> {{ item.product_name }} </a>
+                                        </td>
+                                        <td>{{ item.quantity }}</td>
+                                        <td class="text-right">{{ item.buying_price }}</td>
+                                        <td class="text-right">{{ item.total_cost }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <div class="alert alert-info">Delivery {{ delivery.delivery_number }} has no items</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="card text-white bg-light text-dark">
+{#              <div class="card-header"><h5 class="card-title text-center mb-0">At a Glance</h5></div>#}
+              <div class="card-body  p-0">
+                <table class="table table-responsive mb-0">
+                    <tr><td style="background: #eeeeee;">Supplier</td><td>{{ delivery.received_from.name }}</td></tr>
+                    <tr><td style="background: #eeeeee;">Number</td><td>{{ delivery.delivery_number }}</td></tr>
+                    <tr><td style="background: #eeeeee;">Date</td><td>{{ delivery.date }}</td></tr>
+                    <tr><td style="background: #eeeeee;">Value</td><td>{{ delivery.value }}</td></tr>
+                    <tr><td style="background: #eeeeee;">Staff</td><td>{{ delivery.processed_by.get_full_name }}</td></tr>
+                </table>
+              </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock page_content %}

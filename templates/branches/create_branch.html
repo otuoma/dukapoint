@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% block title %}Create Branch{% endblock title %}
+{% block page_content %}
+    <nav class="navbar navbar-expand-lg context-bar">
+      <a class="navbar-brand" href="#">
+          <i class="fa fa-code-branch"></i> Branches
+      </a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav ml-auto">
+          <a class="nav-item nav-link" href="{% url 'branches:home' %}">
+              <i class="fa fa-list"></i> View</a>
+        </div>
+      </div>
+    </nav>
+
+    {% include 'messages.html' %}
+
+    <div class="row">
+        <div class="col-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="">Add New Branch</h5>
+                </div>
+                <div class="card-body">
+                    <form action="{% url 'branches:create-branch' %}" method="post">{% csrf_token %}
+
+                        {{ form.as_p }}
+
+                        <button type="submit" class="btn btn-info btn-block">Submit</button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="">Store Branches</h5>
+                </div>
+                <div class="card-body">
+                    {% if branches|length > 0 %}
+                        <table class="table table-striped table-bordered table-hover table-condensed">
+                            <thead class="bg-light">
+                                <th>Name</th><th>Code</th><th>Location</th><th>Email</th><th>Phone</th><th>Created</th>
+                            </thead>
+                            <tbody>
+                                {% for branch in branches %}
+                                    <tr>
+                                        <td>
+                                            <a href="{% url 'branches:update-branch' pk=branch.pk %}"> {{ branch.name }}</a>
+                                        </td>
+                                        <td>{{ branch.branch_code }}</td>
+                                        <td>{{ branch.location }}</td>
+                                        <td>{{ branch.email }}</td>
+                                        <td>{{ branch.phone_contact }}</td>
+                                        <td>{{ branch.created|date:'d-m-Y' }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <div class="alert alert-info">No branches have been added yet</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+{% endblock page_content %}

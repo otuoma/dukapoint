@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+        {% load static %}
+{% block page_style %}
+        <style>
+            th{background-color: rgb(233, 236, 239);}
+            .fa-trash-alt, .fa-trash{color: red;}
+        </style>
+{% endblock page_style %}
+{% block page_js %}{% endblock page_js %}
+
+{% block page_content %}
+    {% include 'messages.html' %}
+    <div class="row">
+        <div class="col-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    {% if cart_products|length > 0 %}
+                        <form method="post" action="{% url 'sales:check-out' %}" id="checkout-form">{% csrf_token %}
+                            <input name="confirm_sale" type="hidden" />
+                            <p>Proceed to check-out ?</p>
+                            <button type="submit" class="btn btn-info btn-block btn-lg">
+                                <i class="fa fa-check-circle"> </i> Check-out
+                            </button>
+                        </form>
+                    {% else %}
+                        <div class="alert alert-info">
+                            Nothing to checkout, <a href="{% url 'sales:home' %}"> go to POS.</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-8">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-8">
+                            <h4 class="card-title mb-0"><i class="fa fa-shopping-cart"></i> Shopping Cart</h4>
+                        </div>
+                        <div class="col-4" id="cart-total">
+                            <h4 class="card-title mb-0">KES : 0.0</h4>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="card-body">
+                    <div id="cart-contents">
+                        {% if cart_products|length > 0 %}
+                            <table class='table table-bordered' id='cart-table'>
+                                <thead><th></th><th>Item</th><th>Qty</th><th>Price</th><th>Total</th></thead>
+                                <tbody>
+                                    {% for product in cart_products %}
+                                        <tr id='{{ product.product_id }}'>
+                                            <td>
+                                                <a href="{% url 'sales:delete-from-cart' product_id=product.product_id %}">
+                                                    <i class="fa fa-trash-alt"></i>
+                                                </a>
+                                            </td>
+                                            <td>{{ product.product_name }}</td>
+                                            <td>{{ product.quantity }}</td>
+                                            <td>{{ product.unit_price }}</td>
+                                            <td class="product_total">{{ product.total }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+
+                        {% else %}
+                            <div class="alert alert-info" id="cart-alert">No items, shopping cart is empty</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function () {
+
+        let cart_total = 0.0;
+        let product_totals = document.getElementsByClassName('product_total');
+
+        let i;
+        for (i = 0; i < product_totals.length; i++) {
+            cart_total += parseFloat(product_totals[i].textContent);
+        }
+
+        $('#cart-total').html("<h4 class='card-title mb-0'>KES : "+cart_total+"</h4>");
+
+    });
+    </script>
+
+{% endblock page_content %}

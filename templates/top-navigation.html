@@ -1,0 +1,40 @@
+<nav class="navbar navbar-expand-lg" style="background: #17a2b4;">
+    <button type="button" id="sidebarCollapse" class="btn btn-info btn-sm rounded">
+        <i class="fa fa-bars navbar-toggler-icon"></i>
+    </button>
+
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item active">
+                <a class="nav-link" href="{% url 'sales:home' %}">
+                    POS <span class="text-white">
+                    {% if request.user.branch %}
+                        @{{ request.user.branch.name|truncatechars:10 }}
+                    {% endif %}</span>
+                </a>
+            </li>
+            {% if request.user.is_authenticated %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fa fa-user" style="color:rd"></i> <strong>{{ request.user.last_name }}</strong>
+                    </a>
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                          <a class="dropdown-item" href="{% url 'staff:update-staff' pk=request.user.pk %}">My Profile</a>
+                          <a class="dropdown-item" href="{% url 'staff:change-branch' %}">Change branch</a>
+                          <a class="dropdown-item" href="{% url 'staff:logout' %}">Logout</a>
+                        </div>
+                </li>
+            {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'staff:login' %}">
+                        <i class="fa fa-sign-in-alt"></i> Login
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
+
+</nav>

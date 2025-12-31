@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block title %}Delete Customer{% endblock title %}
+{% block page_content %}
+    <nav class="navbar navbar-expand-lg context-bar">
+      <a class="navbar-brand" href="#"> <i class="fa fa-handshake"></i> Customers</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav ml-auto">
+
+            <a class="nav-item nav-link" href="{% url 'customers:update-customer' pk=customer.pk %}">
+              <i class="fa fa-edit"></i> Edit
+            </a>
+          <a class="nav-item nav-link" href="{% url 'customers:create-customer' %}">
+              <i class="fa fa-plus-circle"></i> Add New
+          </a>
+            <a class="nav-item nav-link" href="{% url 'customers:home' %}">
+              <i class="fa fa-list"></i> View
+            </a>
+        </div>
+      </div>
+    </nav>
+
+    {% include 'messages.html' %}
+
+    <div class="row">
+        <div class="col-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="">Delete {{ customer.name }}</h5>
+                </div>
+                <div class="card-body">
+                    <h5 class="text-danger">Proceed to delete {{ customer.name }} ?</h5>
+                    <form action="{% url 'customers:delete-customer' pk=customer.pk %}" method="post">{% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-block">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="">{{ customer.name }}'s Details</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-hover table-striped table-responsive">
+                        <tbody>
+                            <tr><td>Name</td><td>{{ customer.name }}</td></tr>
+                            <tr><td>Phone</td><td>{{ customer.primary_phone }}</td></tr>
+                            <tr><td>Email</td><td>{{ customer.email }}</td></tr>
+                            <tr><td>Created</td><td>{{ customer.date_created|date:'d-m-Y H:i' }}</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+{% endblock page_content %}

@@ -5,8 +5,8 @@ charset-normalizer==2.0.12
 Django==4.1.7
 idna==3.3
 # mysql-connector-python==8.0.29
-# mysqlclient==2.1.0
-Pillow==9.3.0
+mysqlclient
+Pillow==12.0.0
 protobuf==3.20.2
 pytz==2022.1
 requests==2.27.1

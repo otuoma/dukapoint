@@ -56,6 +56,10 @@ class PostStock(PermissionRequiredMixin, TemplateView):
 
     def get(self, request, *args, **kwargs):
 
+        if not request.user.branch:
+            messages.error(request, "You are not assigned to any branch.", extra_tags="alert alert-danger")
+            return redirect(to="/deliveries/")
+
         try:
             products = request.session['products']
         except KeyError:

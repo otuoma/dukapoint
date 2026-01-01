@@ -110,6 +110,14 @@ class CheckOut(PermissionRequiredMixin, FormView):
                 })
 
         del request.session['cart_products']
+        
+        if settings.PRINT_RECEIPTS:
+             grand_total = sum([item['total'] for item in products_list])
+             return render(request, "sales/print_receipt.html", {
+                 "products_list": products_list,
+                 "grand_total": grand_total
+             })
+
         messages.success(request, 'Sale completed successfully', extra_tags='alert alert-success')
 
         return redirect(to='/sales/')

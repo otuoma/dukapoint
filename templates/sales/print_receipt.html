@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Receipt</title>
+    <title>Sales Receipt</title>
     <style>
         body {
             font-family: 'Courier New', Courier, monospace;
@@ -12,6 +12,11 @@
             margin: 0;
             padding: 5px;
         }
+
+        /* @page {
+            size: 80mm auto;
+            margin: 0;
+        } */
 
         .header {
             text-align: center;
@@ -81,10 +86,10 @@
 <body onload="window.print()">
 
     <div class="header">
-        <h2>DukaPoint</h2>
-        <p>Branch: {{ request.user.branch.name }}</p>
-        <p>Attendant: {{ request.user.get_full_name }}</p>
-        <p>Date: {% now "d-m-Y H:i" %}</p>
+        <h2>MEDCHANE HOSPITAL</h2>
+        <p>{{ request.user.branch.name }} Branch</p>
+        <p>Contact: {{ request.user.branch.phone_contact }}</p>
+        <p>Transaction Date: {% now "d-m-Y H:i" %}</p>
     </div>
 
     <table>
@@ -116,8 +121,9 @@
     </div>
 
     <div class="footer">
-        <p>Thank you for shopping with us!</p>
-        <p>Software by DukaPoint</p>
+        <p>Wishing you a quick recovery!</p>
+        <p>Served by {{ request.user.get_full_name }}</p>
+        <p>POS Software by OtCloud</p>
     </div>
 
     <div class="no-print">

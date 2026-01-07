@@ -19,4 +19,6 @@ urlpatterns = [
     path('process-transfer/', views.ProcessTransfer.as_view(), name='process-transfer'),
     path('receive-transfer/<int:transfer_id>/', views.ReceiveTransfer.as_view(), name='receive-transfer'),
 
+    path('search-manufacturers/', views.SearchManufacturers.as_view(), name='search-manufacturers'),
+    path('search-suppliers/', views.SearchSuppliers.as_view(), name='search-suppliers'),
 ]

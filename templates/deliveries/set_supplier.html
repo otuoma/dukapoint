@@ -1,49 +1,97 @@
 {% extends 'base.html' %}
 {% block title %}Set Supplier{% endblock title %}
+{% load static %}
+
+{% block page_style %}
+<link href="{% static 'autocomplete/easy-autocomplete.min.css' %}" rel="stylesheet" type="text/css">
+{% endblock page_style %}
+{% block page_js %}
+<script src="{% static 'autocomplete/jquery-1.11.2.min.js' %}"></script>
+<script src="{% static 'autocomplete/jquery.easy-autocomplete.min.js' %}" type="text/javascript"></script>
+{% endblock page_js %}
 {% block page_content %}
-    <nav class="navbar navbar-expand-lg context-bar">
-      <a class="navbar-brand" href="#">
-          <i class="fa fa-truck-loading"> </i> Set Supplier
-      </a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+<nav class="navbar navbar-expand-lg context-bar">
+    <a class="navbar-brand" href="#">
+        <i class="fa fa-truck-loading"> </i> Set Supplier
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+        aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav ml-auto">
-          <a class="nav-item nav-link" href="{% url 'deliveries:home' %}">
-              <i class="fa fa-plus-circle"></i> View Deliveries
-          </a>
+            <a class="nav-item nav-link" href="{% url 'deliveries:home' %}">
+                <i class="fa fa-plus-circle"></i> View Deliveries
+            </a>
         </div>
-      </div>
-    </nav>
+    </div>
+</nav>
 
-    {% include 'messages.html' %}
+{% include 'messages.html' %}
 
-    <div class="card ">
-        <div class="card-body">
-            <div class="row">
-                <div class="col-6">
-                    <form action="{% url 'deliveries:set-supplier' %}" method="post">
-                        {% csrf_token %}
-                        {{ form.as_p }}
-                        <p class="p-4">
-                            <button type="submit" class="btn btn-info btn-block">
-                                Next <i class="fa fa-arrow-right"></i>
-                            </button>
-                        </p>
-                    </form>
-                </div>
-                <div class="col-6">
-                    <div class="card">
-                        <div class="card-body" style="background-color: #eee;">
-                            Set the supplier and click next to start processing the delivery.
-                            To create a new supplier, <a href="{% url 'suppliers:create-supplier' %}">click here</a>
-                        </div>
+<div class="card ">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-6">
+                <form action="{% url 'deliveries:set-supplier' %}" method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="supplier_search">Supplier</label>
+                        {{ form.supplier.as_hidden }}
+                        <input type="text" id="supplier_search" class="form-control"
+                            placeholder="Type to search supplier..." autocomplete="off">
+                        {{ form.supplier.errors }}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ form.delivery_number.id_for_label }}">Delivery Number</label>
+                        {{ form.delivery_number }}
+                        {{ form.delivery_number.errors }}
+                    </div>
+
+                    <script>
+                        $(document).ready(function () {
+                            var $supplierHidden = $("#id_supplier");
+                            var $supplierSearch = $("#supplier_search");
+
+                            var supplierOptions = {
+                                url: function (phrase) {
+                                    return "{% url 'products:search-suppliers' %}?term=" + phrase;
+                                },
+                                getValue: "name",
+                                list: {
+                                    match: { enabled: true },
+                                    onChooseEvent: function () {
+                                        var selectedId = $supplierSearch.getSelectedItemData().id;
+                                        $supplierHidden.val(selectedId);
+                                    }
+                                },
+                                theme: "plate-dark"
+                            };
+                            $supplierSearch.easyAutocomplete(supplierOptions);
+                        });
+                    </script>
+                    <p class="p-4">
+                        <button type="submit" class="btn btn-info btn-block">
+                            Next <i class="fa fa-arrow-right"></i>
+                        </button>
+                    </p>
+                </form>
+            </div>
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-body" style="background-color: #eee;">
+                        Set the supplier and click next to start processing the delivery.
+                        To create a new supplier,
+                        <a href="{% url 'suppliers:create-supplier' %}" class="text-info">click here</a>
+                        <p class="text-dark">Use the delivery number on the delivery note or use the receipt number if
+                            this is a direct purchase.</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
 
 {% endblock page_content %}

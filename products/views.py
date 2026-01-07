@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.http import JsonResponse
 from django.urls import reverse_lazy
 from datetime import datetime
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.views.generic import TemplateView, FormView, UpdateView, DeleteView, DetailView, ListView
+from django.views.generic import TemplateView, FormView, UpdateView, DeleteView, DetailView, ListView, View
 from products.models import Product, Transfer, TransferProduct, BranchProduct
 from deliveries.models import Stock, Delivery
 from suppliers.models import Supplier
@@ -561,6 +562,49 @@ class SetTransferTo(PermissionRequiredMixin, FormView):
             request.session['transfer_to_id'] = form.cleaned_data['transfer_to'].pk
 
             return redirect(to="/products/add-product/")
+
         else:
 
             return render(request, self.template_name, self.get_context_data())
+
+
+class SearchManufacturers(View):
+    """Search for manufacturers"""
+
+    def get(self, request, *args, **kwargs):
+        
+        term = request.GET.get('term')
+
+        if term:
+            manufacturers = Product.objects.filter(manufacturer__icontains=term).values_list('manufacturer', flat=True).distinct()[:10]
+            
+            # Since values_list returns a QuerySet, we can convert it to a list if needed,
+            # but for simple Autocomplete, a list of strings is fine.
+            # However, easy-autocomplete often expects JSON objects. 
+            # Let's see how POS does it. 
+            # POS POS uses: 
+            # list: { match: { enabled: true }, onChooseEvent: ... } 
+            # and searches 'name'.
+            # It expects a list of objects usually.
+            
+            # Let's conform to a simple list of dicts for safety
+            results = [{'name': m} for m in manufacturers if m] # Filter out empty strings if any
+            
+            return JsonResponse(results, safe=False)
+        
+        return JsonResponse([], safe=False)
+
+
+class SearchSuppliers(View):
+    """Search for suppliers"""
+
+    def get(self, request, *args, **kwargs):
+        
+        term = request.GET.get('term')
+
+        if term:
+            suppliers = Supplier.objects.filter(name__icontains=term)[:10]
+            results = [{'name': s.name, 'id': s.pk} for s in suppliers]
+            return JsonResponse(results, safe=False)
+        
+        return JsonResponse([], safe=False)

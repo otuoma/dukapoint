@@ -37,17 +37,18 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            border-bottom: 1px dashed #000;
+            border: 1px solid #000;
         }
 
         th {
             text-align: left;
-            border-bottom: 1px dashed #000;
-            padding: 5px 0;
+            border: 1px solid #000;
+            padding: 5px;
         }
 
         td {
-            padding: 5px 0;
+            border: 1px solid #000;
+            padding: 5px;
         }
 
         .text-right {
@@ -56,8 +57,8 @@
 
         .total-section {
             margin-top: 10px;
-            border-top: 1px dashed #000;
-            padding-top: 5px;
+            border: 1px solid #000;
+            padding: 5px;
         }
 
         .footer {
@@ -90,8 +91,13 @@
     <div class="header">
         <h2>MEDCHANE HOSPITAL</h2>
         <p>{{ request.user.branch.name }} Branch</p>
+        {% if request.user.branch.location %}
+        <p>{{ request.user.branch.location }}</p>
+        {% endif %}
+        {% if request.user.branch.phone_contact %}
         <p>Contact: {{ request.user.branch.phone_contact }}</p>
-        <p>Transaction Date: {% now "d-m-Y H:i" %}</p>
+        {% endif %}
+        <p>Transaction Date: {% now "d-m-Y h:i A" %}</p>
     </div>
 
     <table>
